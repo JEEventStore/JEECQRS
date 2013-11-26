@@ -1,7 +1,5 @@
 package org.jeeventstore.jeecqrs.sagas;
 
-import de.redrainbow.care.common.sagas.SagaTimeoutRequest;
-import de.redrainbow.care.common.sagas.SagaTimeoutRequestImpl;
 import java.util.List;
 
 /**
