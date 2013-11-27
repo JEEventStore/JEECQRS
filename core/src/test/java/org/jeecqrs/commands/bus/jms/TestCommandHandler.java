@@ -1,51 +1,24 @@
 package org.jeecqrs.commands.bus.jms;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.ejb.ActivationConfigProperty;
-import javax.ejb.MessageDriven;
-import javax.ejb.MessageDrivenContext;
-import javax.jms.Message;
-import javax.jms.MessageListener;
+import javax.ejb.Stateless;
+import org.jeecqrs.commands.CommandHandler;
 
-/**
- *
- */
-@MessageDriven(
-        mappedName = "commandQueue",  // required on Glassfish
-        activationConfig =  {
-            // Glassfish: muss property.Name sein, darf / nicht enthalten
-            // Jboss: muss jndi name sein, mandatory
-            @ActivationConfigProperty(propertyName = "destinatio", propertyValue = "commandQueue")
-            //@ActivationConfigProperty(
-             //       propertyName = "destinationLookup",
-              //      propertyValue = "commandQueue") 
-
-        }
-)
-public class TestCommandHandler implements MessageListener {
-
-    @Resource
-    private MessageDrivenContext mdc;
-
-    @PostConstruct
-    public void postConstruct() {
-        System.out.println("##################### Post construct called!");
-        System.out.println(mdc.getContextData().values());
-    }
+@Stateless
+public class TestCommandHandler implements CommandHandler<TestCommand> {
 
     @Override
-    public void onMessage(Message message) {
-        System.out.println("JMSCommandHandler: received message: " + message);
+    public void handleCommand(TestCommand command) {
+        System.out.println("Received command: " + command.payload);
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
             // ignore
         }
-        System.out.println("Ready processed");
     }
 
-    
-
+    @Override
+    public Class<? extends TestCommand> handledCommandType() {
+        return TestCommand.class;
+    }
     
 }

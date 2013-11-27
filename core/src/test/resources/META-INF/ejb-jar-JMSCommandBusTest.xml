@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ejb-jar xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xmlns="http://java.sun.com/xml/ns/javaee" 
+         xmlns:ejb="http://java.sun.com/xml/ns/javaee/ejb-jar_3_1.xsd" 
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_1.xsd" 
+         version="3.1">
+
+    <enterprise-beans>    
+
+        <session>
+            <ejb-name>CommandHandlerRegistry</ejb-name>
+            <business-local>org.jeecqrs.commands.registry.AutoDiscoverCommandHandlerRegistry</business-local>
+            <ejb-class>org.jeecqrs.commands.registry.AutoDiscoverCommandHandlerRegistry</ejb-class>
+            <session-type>Singleton</session-type>
+            <init-on-startup>true</init-on-startup>
+        </session>
+
+        <message-driven>
+            <ejb-name>JMSCommandBusListener</ejb-name>
+            <ejb-class>org.jeecqrs.commands.bus.jms.JMSCommandBusListener</ejb-class>
+            <messaging-type>javax.jms.MessageListener</messaging-type>
+            <message-destination-type>javax.jms.Queue</message-destination-type>
+            <!-- mappedName is required for Glassfish and must be the JNDI queue name -->
+            <mapped-name>commandQueue</mapped-name>
+            <activation-config>
+                <!-- destination is the JNDI location of the queue on JBoss, 
+                     but the physical queue name on Glassfish, which must
+                     NOT contain slashes.  Hence we must a global JNDI name w/o slashes. -->
+                <activation-config-property>
+                    <activation-config-property-name>destination</activation-config-property-name>
+                    <activation-config-property-value>commandQueue</activation-config-property-value>
+                </activation-config-property>
+                <activation-config-property>
+                    <activation-config-property-name>destinationType</activation-config-property-name>
+                    <activation-config-property-value>javax.jms.Queue</activation-config-property-value>
+                </activation-config-property>
+                <activation-config-property>
+                    <activation-config-property-name>acknowledgeMode</activation-config-property-name>
+                    <activation-config-property-value>Auto-acknowledge</activation-config-property-value>
+                </activation-config-property>
+            </activation-config>
+            <ejb-local-ref>
+                <ejb-ref-name>commandHandlerRegistry</ejb-ref-name>
+                <local>org.jeecqrs.commands.registry.AutoDiscoverCommandHandlerRegistry</local>
+                <ejb-link>CommandHandlerRegistry</ejb-link>
+            </ejb-local-ref>
+        </message-driven>
+
+            <!--resource-ref>
+                <res-ref-name>jms/ConnectionFactory</res-ref-name>
+                <res-type>javax.jms.QueueConnectionFactory</res-type>
+                <mapped-name>jms/ConnectionFactory</mapped-name>
+                <lookup-name>java:/jms/ConnectionFactory</lookup-name>
+            </resource-ref-->
+
+ 
+        <!-- mappedName has higher precedence than lookup-name -->
+        <session>
+            <ejb-name>CommandBus</ejb-name>
+            <business-local>org.jeecqrs.commands.CommandBus</business-local>
+            <ejb-class>org.jeecqrs.commands.bus.jms.JMSCommandBus</ejb-class>
+            <session-type>Stateless</session-type>
+            <resource-ref>
+                <res-ref-name>jms/ConnectionFactory</res-ref-name>
+                <res-type>javax.jms.QueueConnectionFactory</res-type>
+                <mapped-name>jms/ConnectionFactory</mapped-name>
+                <lookup-name>java:/jms/ConnectionFactory</lookup-name>
+            </resource-ref>
+            <resource-env-ref>
+                <resource-env-ref-name>jms/commandQueue</resource-env-ref-name>
+                <resource-env-ref-type>javax.jms.Queue</resource-env-ref-type>
+                <mapped-name>commandQueue</mapped-name>
+                <lookup-name>java:/commandQueue</lookup-name>
+            </resource-env-ref>
+        </session>
+        
+    </enterprise-beans>
+
+</ejb-jar>
