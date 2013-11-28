@@ -17,10 +17,10 @@ import java.util.logging.Logger;
 public class MultiTopicDelivery<M> {
 
     private static final Logger log = Logger.getLogger(MultiTopicDelivery.class.getCanonicalName());
-    public static int MAX_ATTEMPTS = 10;              // max # of attepmts to deliver a message
 
     private final MultiTopicSubscriber<M> subscriber;  // the subscriber that is supposed to receive the messages
-    private SubscriberFailingCallback<M> failingSubCB; // callback for failing subscribers
+    private SubscriberFailingCallback failingSubCB;    // callback for failing subscribers
+    private long maxAttempts = 10;                     // max # of attepmts to deliver a message
     private long failedAttempts = 0;                   // # of failed attempts to deliver a message
     private final Queue<MessageEnvelope<M>> messageQueue; // queue of pending messages
     private final Lock lock;                           // lock to restrict deliver()
@@ -82,12 +82,12 @@ public class MultiTopicDelivery<M> {
 
     private void handleError(Exception e) {
         failedAttempts++;
-        if (failedAttempts >= MAX_ATTEMPTS) {
+        if (failedAttempts >= maxAttempts) {
             log.log(Level.SEVERE,
                     "Repeated failing of delivering msg to {0}: {1}",
                     new Object[]{subscriber, e.getMessage()});
             if (failingSubCB != null)
-                failingSubCB.isFailing(subscriber);
+                failingSubCB.isFailing();
         }
     }
 
@@ -118,6 +118,16 @@ public class MultiTopicDelivery<M> {
      */
     public void setSubscriberFailingCallbck(SubscriberFailingCallback callback) {
         this.failingSubCB = callback;
+    }
+
+    /**
+     * Sets the maximum attempts to deliver a message until the failing
+     * callback is called.
+     * 
+     * @param maxAttempts  the maximum number of attempts
+     */
+    public void setMaxAttempts(long maxAttempts) {
+        this.maxAttempts = maxAttempts;
     }
 
     @Override
