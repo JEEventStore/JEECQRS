@@ -5,6 +5,8 @@ import java.util.Set;
 /**
  * Publish-subscribe messaging system subscriber supporting multiple topics
  * of interest.
+ * 
+ * @param <M>   the message interface
  */
 public interface MultiTopicSubscriber<M> {
 

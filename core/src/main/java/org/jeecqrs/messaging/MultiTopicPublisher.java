@@ -4,6 +4,8 @@ package org.jeecqrs.messaging;
  * Publish-subscribe messaging system publisher supporting multiple topics
  * per subscriber.
  * Implementations must be thread-safe.
+ * 
+ * @param <M>  the message interface
  */
 public interface MultiTopicPublisher<M> {
 
