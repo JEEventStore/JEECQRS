@@ -40,7 +40,7 @@ public class JMSCommandBusTest extends Arquillian {
     @Test
     public void testSend() {
         for (int i = 0; i < 50; i++)
-            commandBus.send(new TestCommand("Hello, World"));
+            commandBus.send("DEFAULT", new TestCommand("Hello, World"));
         System.out.println("Warte 10 Sekundne, bis MDB fertig ist");
         try {
             Thread.sleep(10000);
