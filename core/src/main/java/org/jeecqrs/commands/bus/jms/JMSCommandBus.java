@@ -32,6 +32,9 @@ public class JMSCommandBus<C extends Serializable> implements CommandBus<C> {
     @Resource
     private SessionContext sessionContext;
 
+    @Resource(name="usePersistentMessages")
+    private Boolean usePersistentMessages = false;
+
     private Connection connection;
 
     @PostConstruct
@@ -75,7 +78,8 @@ public class JMSCommandBus<C extends Serializable> implements CommandBus<C> {
 
     protected MessageProducer createProducer(Session session, Destination destination) throws JMSException {
         MessageProducer producer = session.createProducer(destination);
-        producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
+        if (usePersistentMessages == null || !usePersistentMessages)
+            producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
         return producer;
     }
 
