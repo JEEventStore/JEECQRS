@@ -125,8 +125,10 @@ public class LocalMultiTopicPublisher<M> implements MultiTopicPublisher<M> {
      * handling in {@link MultiTopicSubscriber#receiveMessage}.  This causes
      * an {@link EJBException}, which immediately forces the surrounding
      * transaction A into roll-back-only state, even if we manually catch the
-     * {@link EJBException}.  We would therefore be forced to rollback the
-     * transactions for <b>all</b> subscribers (possibly requiring
+     * {@link EJBException}.  
+     * (see, e.g., http://stackoverflow.com/questions/8490684/ejb-avoid-transaction-rollback )
+     * We would therefore be forced to rollback the
+     * transaction(s) for <b>all</b> subscribers (possibly requiring
      * two-phase-commits in those subscribers), or leave the subscribers and the
      * delivery queue in an undefined state.  To avoid this situation, we
      * require that no transaction is active in {@link #deliver}.  Now, if 
