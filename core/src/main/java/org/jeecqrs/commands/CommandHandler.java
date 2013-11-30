@@ -1,8 +1,5 @@
 package org.jeecqrs.commands;
 
-import java.util.Collection;
-import java.util.List;
-
 /**
  *
  */
