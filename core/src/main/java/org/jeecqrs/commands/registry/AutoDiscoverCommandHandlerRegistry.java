@@ -15,20 +15,23 @@ public class AutoDiscoverCommandHandlerRegistry<C> extends AbstractCommandHandle
     private Logger log = Logger.getLogger(AutoDiscoverCommandHandlerRegistry.class.getName());
 
     @Inject
-    private Instance<CommandHandler> handlerInstances;
+    private Instance<CommandHandler<C>> handlerInstances;
 
     @PostConstruct
     public void startup() {
         log.info("Scanning command handlers");
-	Iterator<CommandHandler> it = handlerInstances.iterator();
-        if (!it.hasNext()) {
+	Iterator<CommandHandler<C>> it = select(handlerInstances);
+        if (!it.hasNext())
             log.warning("No CommandHandlers found");
-        }
 	while (it.hasNext()) {
             CommandHandler h = it.next();
             log.fine("Discovered CommandHandler: "+ h);
             this.register(h.handledCommandType(), h);
 	}
+    }
+
+    protected Iterator<CommandHandler<C>> select(Instance<CommandHandler<C>> instances) {
+        return instances.iterator();
     }
     
 }
