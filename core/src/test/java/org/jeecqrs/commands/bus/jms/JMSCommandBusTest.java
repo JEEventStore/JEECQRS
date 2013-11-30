@@ -23,6 +23,7 @@ public class JMSCommandBusTest extends Arquillian {
         EnterpriseArchive ear = ShrinkWrap.create(EnterpriseArchive.class, "test.ear")
                 .addAsModule(ShrinkWrap.create(JavaArchive.class, "ejb.jar")
                         .addAsManifestResource(new File("src/test/resources/META-INF/beans.xml"))
+                        .addAsManifestResource(new File("src/test/resources/META-INF/hornetq-jms.xml"))
                         .addAsManifestResource(new File(
                                 "src/test/resources/META-INF/ejb-jar-JMSCommandBusTest.xml"),
                                 "ejb-jar.xml")
