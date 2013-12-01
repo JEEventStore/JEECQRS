@@ -1,37 +1,46 @@
 package org.jeecqrs.commands.registry;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import org.jeecqrs.commands.CommandHandlerRegistry;
 import org.jeecqrs.commands.CommandHandler;
 
-public class AbstractCommandHandlerRegistry<C> implements CommandHandlerRegistry<C> {
+public abstract class AbstractCommandHandlerRegistry<C> implements CommandHandlerRegistry<C> {
 
-    private Logger log = Logger.getLogger(this.getClass().getName());
+    private final Logger log = Logger.getLogger(this.getClass().getName());
 
-    private Map<Class<? extends C>, CommandHandler<? extends C>> handlers = new HashMap<>();
+    private final Map<Class<? extends C>, CommandHandler<C>> handlers = new HashMap<>();
 
     @Override
     @Lock(LockType.READ)
-    public <T> CommandHandler<T> commandHandlerFor(Class<T> clazz) {
+    public CommandHandler<C> commandHandlerFor(Class<? extends C> clazz) {
         return lookup(clazz);
     }
 
     @Lock(LockType.WRITE)
     protected void register(
             Class<? extends C> clazz,
-            CommandHandler<? extends C> handler) {
-        log.info("Registering CommandHandler for class " + clazz.getCanonicalName() + ": "+ handler);
+            CommandHandler<C> handler) {
+        log.log(Level.INFO, "Registering CommandHandler for class {0}: {1}",
+                new Object[]{clazz.getCanonicalName(), handler});
         if (lookup(clazz) != null)
             throw new IllegalStateException("Handler for " + clazz.getCanonicalName() + " already registered");
         handlers.put(clazz, handler);
     }
 
-    protected <T> CommandHandler<T> lookup(Class<T> clazz) {
-        return (CommandHandler < T >) handlers.get(clazz);
+    @Override
+    public Set<CommandHandler<C>> allCommandHandlers() {
+        return new HashSet<>(handlers.values());
+    }
+
+    protected CommandHandler<C> lookup(Class<? extends C> clazz) {
+        return handlers.get(clazz);
     }
 
 }
