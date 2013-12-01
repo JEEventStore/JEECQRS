@@ -9,7 +9,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jeecqrs.commands.CommandBus;
-import org.jeecqrs.commands.registry.AutoDiscoverCommandHandlerRegistry;
+import org.jeecqrs.commands.registry.autodiscover.AutoDiscoverCommandHandlerRegistry;
 import static org.testng.Assert.*;
 import org.testng.annotations.Test;
 
