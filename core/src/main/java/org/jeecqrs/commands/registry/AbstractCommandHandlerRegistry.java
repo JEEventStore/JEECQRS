@@ -23,10 +23,16 @@ public abstract class AbstractCommandHandlerRegistry<C> implements CommandHandle
         return lookup(clazz);
     }
 
-    @Lock(LockType.WRITE)
-    protected void register(
-            Class<? extends C> clazz,
-            CommandHandler<C> handler) {
+    @Override
+    @Lock(LockType.READ)
+    public Set<CommandHandler<C>> allCommandHandlers() {
+        return new HashSet<>(handlers.values());
+    }
+
+    /**
+     * Must only be called from {@code LockType.WRITE} protected methods.
+     */
+    protected void register(Class<? extends C> clazz, CommandHandler<C> handler) {
         log.log(Level.INFO, "Registering CommandHandler for class {0}: {1}",
                 new Object[]{clazz.getCanonicalName(), handler});
         if (lookup(clazz) != null)
@@ -34,11 +40,9 @@ public abstract class AbstractCommandHandlerRegistry<C> implements CommandHandle
         handlers.put(clazz, handler);
     }
 
-    @Override
-    public Set<CommandHandler<C>> allCommandHandlers() {
-        return new HashSet<>(handlers.values());
-    }
-
+    /**
+     * May be called from {@code LockType.READ} protected methods.
+     */
     protected CommandHandler<C> lookup(Class<? extends C> clazz) {
         return handlers.get(clazz);
     }

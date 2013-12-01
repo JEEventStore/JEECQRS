@@ -23,10 +23,10 @@ public class AutoDiscoverCommandHandlerRegistry<C> extends AbstractCommandHandle
         log.info("Scanning command handlers");
 	Iterator<CommandHandler<C>> it = select(handlerInstances);
         if (!it.hasNext())
-            log.warning("No CommandHandlers found");
+            log.warning("No command handlers found");
 	while (it.hasNext()) {
             CommandHandler h = it.next();
-            log.fine("Discovered CommandHandler: "+ h);
+            log.fine("Discovered command handler: " + h);
             this.register(h.handledCommandType(), h);
 	}
     }
