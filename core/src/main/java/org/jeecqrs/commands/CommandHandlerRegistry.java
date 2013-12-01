@@ -1,5 +1,7 @@
 package org.jeecqrs.commands;
 
+import java.util.Set;
+
 /**
  *
  */
@@ -7,11 +9,16 @@ public interface CommandHandlerRegistry<C> {
     
     /**
      * 
-     * @param <T>
      * @param clazz
      * @return 
      * @throws CommandHandlerNotFoundException  if no handler can be found
      */
-    <T> CommandHandler<T> commandHandlerFor(Class<T> clazz);
+    CommandHandler<C> commandHandlerFor(Class<? extends C> clazz);
+
+    /**
+     * Returns set of all registered command handlers.
+     * @return 
+     */
+    Set<CommandHandler<C>> allCommandHandlers();
     
 }
