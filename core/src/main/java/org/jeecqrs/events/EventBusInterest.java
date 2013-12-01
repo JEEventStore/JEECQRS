@@ -1,21 +1,31 @@
 package org.jeecqrs.events;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Provides the ability to specify which events a listener wants to
- * receive on the event bus.
+ * Specifies which events a listener wants to receive on the event bus.
  * 
  * @param <E>  the message base type
  */
-public interface EventBusInterest<E> {
+public class EventBusInterest<E> {
+
+    private final Set<Class<? extends E>> interests;
+
+    protected EventBusInterest(Collection<Class<? extends E>> types) {
+        this.interests = Collections.unmodifiableSet(new HashSet<>(types));
+    }
 
     /**
      * Gets the set of event types the listener is interested in.
      * 
      * @return  the set of event classes
      */
-    Set<Class<? extends E>> interestEventTypes();
+    Set<Class<? extends E>> interestEventTypes() {
+        return this.interests;
+    }
 
     /**
      * Tells whether the interest includes the given event type.
@@ -23,6 +33,8 @@ public interface EventBusInterest<E> {
      * @param clazz  the event type
      * @return  {@code true} if the interest includes the given even type
      */
-    boolean includes(Class<? extends E> clazz);
+    boolean includes(Class<? extends E> clazz) {
+        return this.interests.contains(clazz);
+    }
 
 }
