@@ -8,7 +8,7 @@ import java.util.Set;
 /**
  * Specifies which events a listener wants to receive on the event bus.
  * 
- * @param <E>  the message base type
+ * @param <E>  the base message type
  */
 public class EventBusInterest<E> {
 
@@ -23,7 +23,7 @@ public class EventBusInterest<E> {
      * 
      * @return  the set of event classes
      */
-    Set<Class<? extends E>> interestEventTypes() {
+    public Set<Class<? extends E>> interestEventTypes() {
         return this.interests;
     }
 
@@ -33,7 +33,7 @@ public class EventBusInterest<E> {
      * @param clazz  the event type
      * @return  {@code true} if the interest includes the given even type
      */
-    boolean includes(Class<? extends E> clazz) {
+    public boolean includes(Class<? extends E> clazz) {
         return this.interests.contains(clazz);
     }
 
