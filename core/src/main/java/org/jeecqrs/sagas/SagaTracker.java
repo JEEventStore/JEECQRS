@@ -24,27 +24,21 @@ package org.jeecqrs.sagas;
 /**
  * The SagaTracker manages timeout requests requested by Sagas.
  * The default state is disabled, i.e., requests that timed out are
- * not processed until {@link #enable} has been called.
+ * not processed/withhold until {@link #enable} has been called.
  * 
  * @param <E>   the type of events to handle
  */
 public interface SagaTracker<E> {
 
     /**
-     * Enable the publication of events for requests that have timed out.
+     * Enables the publication of events for requests that have timed out.
+     * 
+     * @param bucketId  the bucket for which publication is started
      */
-    void enablePublication();
+    void startPublication(String bucketId);
 
     /**
-     * Disable the publication of events.
-     * New requests (via {@link #requestTimeout) are still persisted to
-     * durable storage, but the events are not published until the tracker
-     * is enabled.
-     */
-    void disablePublication();
-
-    /**
-     * Request a new timeout.
+     * Requests a new timeout.
      * 
      * @param request  the timeout request
      */
