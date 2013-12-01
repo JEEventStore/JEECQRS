@@ -27,7 +27,7 @@ public class AutoDiscoverCommandHandlerRegistry<C> extends AbstractCommandHandle
 	while (it.hasNext()) {
             CommandHandler h = it.next();
             log.fine("Discovered command handler: " + h);
-            this.register(h.handledCommandType(), h);
+            this.register(h);
 	}
     }
 
