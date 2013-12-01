@@ -8,8 +8,8 @@ import org.jeecqrs.commands.CommandBus;
 public class SimpleSyncCommandBus<C> extends AbstractSimpleCommandBus<C> implements CommandBus<C> {
 
     @Override
-    public void send(String bucketId, C command) {
-        this.callHandler(bucketId, command);
+    public void send(C command) {
+        this.callHandler(command);
     }
 
 }

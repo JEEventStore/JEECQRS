@@ -10,8 +10,8 @@ public class SimpleAsyncCommandBus<C> extends AbstractSimpleCommandBus<C> implem
 
     @Override
     @Asynchronous
-    public void send(String bucketId, C command) {
-        this.callHandler(bucketId, command);
+    public void send(C command) {
+        this.callHandler(command);
     }
 
 }

@@ -18,7 +18,7 @@ public abstract class AbstractSimpleCommandBus<C> {
     @EJB(name="commandHandlerRegistry")
     private CommandHandlerRegistry registry;
 
-    protected void callHandler(String bucketId, C command) {
+    protected void callHandler(C command) {
         CommandHandler<C> handler = registry.commandHandlerFor(command.getClass());
         if (handler == null)
             throw new CommandHandlerNotFoundException(command.getClass());

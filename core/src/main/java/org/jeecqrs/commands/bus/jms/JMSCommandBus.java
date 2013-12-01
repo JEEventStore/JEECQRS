@@ -47,14 +47,13 @@ public class JMSCommandBus<C extends Serializable> implements CommandBus<C> {
     }
 
     @Override
-    public void send(String bucketId, C command) {
+    public void send(C command) {
 	log.log(Level.FINER, "send command: " + command.getClass());
         Session session = null;
         try {
             session = createSession(connection);
             MessageProducer publisher = createProducer(session, commandQueue);
             Message message = createMessage(session, command);
-            message.setStringProperty("bucketId", bucketId);
             publisher.send(message);
         } catch (JMSException e) {
             log.log(Level.SEVERE, "Error sending message: {0}", e.getMessage());
