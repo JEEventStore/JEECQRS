@@ -29,13 +29,6 @@ package org.jeecqrs.sagas;
 public interface SagaTimeoutRequest<E> {
 
     /**
-     * Identifies the bucket to which the saga requesting the timeout belongs.
-     * 
-     * @return  the identifier
-     */
-    String bucketId();
-
-    /**
      * Identifies the saga that requested the timeout.
      * 
      * @return  the identifier

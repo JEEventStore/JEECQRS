@@ -21,8 +21,6 @@
 
 package org.jeecqrs.sagas;
 
-import org.jeecqrs.sagas.SagaTimeoutRequest;
-
 /**
  * Default implementation of {@link SagaTimeoutRequest}.
  * 
@@ -30,21 +28,17 @@ import org.jeecqrs.sagas.SagaTimeoutRequest;
  */
 public class DefaultSagaTimeoutRequest<E> implements SagaTimeoutRequest<E> {
     
-    private String bucketId;
     private String sagaId;
     private long timeout;
     private String description;
     private E event;
 
     public DefaultSagaTimeoutRequest(
-            String bucketId,
             String sagaId,
             long timeout,
             String description,
             E event) {
 
-        if (bucketId == null)
-            throw new NullPointerException("bucketId must not be null");
         if (sagaId == null)
             throw new NullPointerException("sagaId must not be null");
         if (sagaId.trim().isEmpty())
@@ -52,16 +46,10 @@ public class DefaultSagaTimeoutRequest<E> implements SagaTimeoutRequest<E> {
         if (event == null)
             throw new NullPointerException("event must not be null");
 
-        this.bucketId = bucketId;
         this.sagaId = sagaId;
         this.timeout = timeout;
         this.description = description;
         this.event = event;
-    }
-
-    @Override
-    public String bucketId() {
-        return bucketId;
     }
 
     @Override
