@@ -32,10 +32,8 @@ public interface SagaTracker<E> {
 
     /**
      * Enables the publication of events for requests that have timed out.
-     * 
-     * @param bucketId  the bucket for which publication is started
      */
-    void startPublication(String bucketId);
+    void startPublication();
 
     /**
      * Requests a new timeout.

@@ -50,7 +50,7 @@ public abstract class AbstractPollingSagaTracker<E> extends AbstractSerializingS
     }
 
     @Override
-    public void startPublication(String bucketId) {
+    public void startPublication() {
         disabled = false;
         scheduleEarlyCron(0);
     }
