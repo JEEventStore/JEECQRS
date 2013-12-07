@@ -58,7 +58,7 @@ public abstract class AbstractApplicationStartup {
     protected abstract void replayEvents();
 
     /**
-     * Starts the {@link DispatchScheduler}, if required (asynchronous
+     * Starts the dispatch scheduler, if required (asynchronous
      * implementations may not need this).
      */
     protected abstract void startDispatchScheduler();

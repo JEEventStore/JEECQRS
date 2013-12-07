@@ -4,7 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
-import org.jeecqrs.events.EventBus;
+import org.jeecqrs.event.EventBus;
 import org.jeecqrs.sagas.SagaTracker;
 
 public abstract class AbstractSagaTracker<E> implements SagaTracker<E> {
