@@ -7,7 +7,7 @@ package org.jeecqrs.events;
  * 
  * @param <E>  the base event type
  */
-public interface EventBusListener<E> {
+public interface EventBusListener<E> extends ExpressEventInterest<E> {
 
     /**
      * Receives an event that has been dispatched on the event bus.
@@ -15,12 +15,5 @@ public interface EventBusListener<E> {
      * @param event  the event to receive
      */
     void receiveEvent(E event);
-
-    /**
- * Specifies which events a listener wants to receive on the event bus.
-     * 
-     * @return  the event bus interest
-     */
-    EventInterest<E> interest();
     
 }
