@@ -17,10 +17,10 @@ public interface EventBusListener<E> {
     void receiveEvent(E event);
 
     /**
-     * Gets the event types this listener is interested in.
+ * Specifies which events a listener wants to receive on the event bus.
      * 
      * @return  the event bus interest
      */
-    EventBusInterest<E> interest();
+    EventInterest<E> interest();
     
 }

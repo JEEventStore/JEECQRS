@@ -6,15 +6,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Specifies which events a listener wants to receive on the event bus.
+ * Specifies an interest in a set of event types.
  * 
- * @param <E>  the base message type
+ * @param <E>  the base event type
  */
-public class EventBusInterest<E> {
+public class EventInterest<E> {
 
     private final Set<Class<? extends E>> interests;
 
-    protected EventBusInterest(Collection<Class<? extends E>> types) {
+    protected EventInterest(Collection<Class<? extends E>> types) {
         this.interests = Collections.unmodifiableSet(new HashSet<>(types));
     }
 

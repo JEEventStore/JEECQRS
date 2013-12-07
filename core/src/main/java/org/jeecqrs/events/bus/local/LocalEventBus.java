@@ -12,7 +12,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import org.jeecqrs.events.EventBus;
-import org.jeecqrs.events.EventBusInterest;
+import org.jeecqrs.events.EventInterest;
 import org.jeecqrs.events.EventBusListener;
 import org.jeecqrs.events.EventBusListenerRegistry;
 
@@ -99,7 +99,7 @@ public class LocalEventBus<E> implements EventBus<E> {
 
             @Override
             public Set<String> interestedInTopics() {
-                EventBusInterest<E> interest = listener.interest();
+                EventInterest<E> interest = listener.interest();
                 Set<String> result = new HashSet<>();
                 for (Class<? extends E> c : interest.interestEventTypes())
                     result.add(topicGenerator.topicFor(c));

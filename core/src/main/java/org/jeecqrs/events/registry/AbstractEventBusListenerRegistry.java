@@ -9,7 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
-import org.jeecqrs.events.EventBusInterest;
+import org.jeecqrs.events.EventInterest;
 import org.jeecqrs.events.EventBusListener;
 import org.jeecqrs.events.EventBusListenerRegistry;
 
@@ -39,7 +39,7 @@ public class AbstractEventBusListenerRegistry<E> implements EventBusListenerRegi
      * @param handler
      */
     protected void register(EventBusListener<E> handler) {
-        EventBusInterest<E> interest = handler.interest();
+        EventInterest<E> interest = handler.interest();
         for (Class<? extends E> c : interest.interestEventTypes())
             register(handler, c);
     }
