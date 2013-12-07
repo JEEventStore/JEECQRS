@@ -9,6 +9,6 @@ public interface SagaRegistry<E> {
      * 
      * @return  the sagas
      */
-    Set<Saga> allSagas();
+    Set<Class<? extends Saga<E>>> allSagas();
     
 }

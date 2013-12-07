@@ -45,6 +45,8 @@ import org.jeecqrs.event.ExpressEventInterest;
  * use some kind of state-machine approach to achieve idem-potency for events,
  * since events can be delivered multiple times (the event dispatching system
  * has an at-least-once guarantee).
+ * <p>
+ * Sagas are required to provide a default constructor.
  * 
  * @param <E>  the base event type
  */
