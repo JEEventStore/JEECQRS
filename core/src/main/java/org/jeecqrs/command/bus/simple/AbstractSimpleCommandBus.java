@@ -10,6 +10,7 @@ import org.jeecqrs.command.CommandHandlerRegistry;
 
 /**
  * Base for a command bus that calls command handlers directly.
+ * Can be deployed as stateless bean.
  */
 public abstract class AbstractSimpleCommandBus<C> {
 
