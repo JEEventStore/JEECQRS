@@ -19,6 +19,7 @@
         <maven.compiler.target>1.7</maven.compiler.target>
         <maven.compiler.source>1.7</maven.compiler.source>
         <version.compiler.plugin>2.3.1</version.compiler.plugin>
+        <version.apache.commons-lang>2.6</version.apache.commons-lang>
 
         <!-- Tests -->
         <version.testng>6.8</version.testng>
@@ -31,6 +32,7 @@
     </properties>
 
     <dependencies>
+        
 
         <dependency>
             <groupId>org.testng</groupId>
@@ -61,6 +63,13 @@
 
     <dependencyManagement>
         <dependencies>
+
+            <dependency>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>${version.apache.commons-lang}</version>
+                <type>jar</type>
+            </dependency>
 
             <dependency>
                 <groupId>org.jeeventstore</groupId>
