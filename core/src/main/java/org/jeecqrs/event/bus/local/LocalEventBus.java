@@ -11,6 +11,8 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import org.jeecqrs.event.EventBus;
 import org.jeecqrs.event.EventInterest;
 import org.jeecqrs.event.EventBusListener;
@@ -48,6 +50,7 @@ public class LocalEventBus<E> implements EventBus<E> {
     }
 
     @Override
+    @Lock(LockType.READ)
     public void dispatch(E event) {
 	log.info("Dispatching event " + event.toString());
         Class<? extends E> eventClass = (Class<? extends E>) event.getClass();
