@@ -8,18 +8,18 @@ import org.jeecqrs.sagas.SagaIdentificationStrategy;
 /**
  *
  */
-class SagaEventBusListener<E> implements EventBusListener<E> {
+class SagaEventBusListener<C, E> implements EventBusListener<E> {
 
-    private final Class<? extends Saga<E>> sagaClass;
+    private final Class<? extends Saga<C, E>> sagaClass;
     private final EventInterest<E> interest;
     private final SagaIdentificationStrategy<E> identStrategy;
-    private final SagaService<E> sagaService;
+    private final SagaService<C, E> sagaService;
 
     SagaEventBusListener(
-            Class<? extends Saga<E>> sagaClass,
+            Class<? extends Saga<C, E>> sagaClass,
             EventInterest<E> interest,
             SagaIdentificationStrategy<E> identStrategy,
-            SagaService<E> sagaService) {
+            SagaService<C, E> sagaService) {
         
         this.sagaClass = sagaClass;
         this.interest = interest;

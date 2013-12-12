@@ -26,14 +26,40 @@ package org.jeecqrs.sagas;
  * 
  * @param <E>   the type of events to handle
  */
-public interface SagaTimeoutRequest<E> {
+public class SagaTimeoutRequest<E> {
+
+    private String sagaId;
+    private long timeout;
+    private String description;
+    private E event;
+
+    public SagaTimeoutRequest(
+            String sagaId,
+            long timeout,
+            String description,
+            E event) {
+
+        if (sagaId == null)
+            throw new NullPointerException("sagaId must not be null");
+        if (sagaId.trim().isEmpty())
+            throw new IllegalArgumentException("sagaId must not be empty");
+        if (event == null)
+            throw new NullPointerException("event must not be null");
+
+        this.sagaId = sagaId;
+        this.timeout = timeout;
+        this.description = description;
+        this.event = event;
+    }
 
     /**
      * Identifies the saga that requested the timeout.
      * 
      * @return  the identifier
      */
-    String sagaId();
+    public String sagaId() {
+        return sagaId;
+    }
 
     /**
      * Gets the time span after which the given event shall be published in milliseconds.
@@ -43,7 +69,9 @@ public interface SagaTimeoutRequest<E> {
      * 
      * @return number of milliseconds after which the event is to be published
      */
-    long timeout();
+    public long timeout() {
+	return timeout;
+    }
 
     /**
      * A user-defined, human readable description of the timeout request.
@@ -51,13 +79,17 @@ public interface SagaTimeoutRequest<E> {
      * 
      * @return a human readable description of the timeout request
      */
-    String description();
+    public String description() {
+        return description;
+    }
 
     /**
      * Gets the event to be published when the timeout occurred.
      * 
      * @return  the event to be published
      */
-    E event();
+    public E event() {
+	return event;
+    }
     
 }

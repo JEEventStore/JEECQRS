@@ -28,18 +28,11 @@ package org.jeecqrs.sagas;
  * 
  * @param <E>   the type of events to handle
  */
-public interface SagaTracker<E> {
+public interface SagaTracker<E> extends SagaTimeoutProvider<E> {
 
     /**
      * Enables the publication of events for requests that have timed out.
      */
     void startPublication();
-
-    /**
-     * Requests a new timeout.
-     * 
-     * @param request  the timeout request
-     */
-    void requestTimeout(SagaTimeoutRequest<E> request);
 
 }

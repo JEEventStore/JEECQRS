@@ -12,7 +12,7 @@ import org.jeecqrs.sagas.SagaRegistry;
 /**
  *
  */
-public class RegisterSagaHandlersEventBusListenerRegistry<E> extends AbstractEventBusListenerRegistry<E> {
+public class RegisterSagaHandlersEventBusListenerRegistry<C, E> extends AbstractEventBusListenerRegistry<E> {
 
     private final Logger log = Logger.getLogger(RegisterSagaHandlersEventBusListenerRegistry.class.getName());
     
@@ -20,7 +20,7 @@ public class RegisterSagaHandlersEventBusListenerRegistry<E> extends AbstractEve
     private EventBusListenerRegistry<E> delegateRegistry;
 
     @EJB(name="sagaRegistry")
-    private SagaRegistry<E> sagaRegistry;
+    private SagaRegistry<C, E> sagaRegistry;
 
     @EJB(name="sagaService")
     private SagaService sagaService;
@@ -31,9 +31,9 @@ public class RegisterSagaHandlersEventBusListenerRegistry<E> extends AbstractEve
         for (EventBusListener<E> ebl : delegateRegistry.allListeners())
             this.register(ebl);
         log.info("Registering event listeners for sagas");
-        for (Class<? extends Saga<E>> sagaClass : sagaRegistry.allSagas()) {
-            Saga<E> saga = SagaUtil.createInstance(sagaClass);
-            SagaEventBusListener<E> sebl = new SagaEventBusListener<>(sagaClass,
+        for (Class<? extends Saga<C, E>> sagaClass : sagaRegistry.allSagas()) {
+            Saga<C, E> saga = SagaUtil.createInstance(sagaClass);
+            SagaEventBusListener<C, E> sebl = new SagaEventBusListener<>(sagaClass,
                     saga.interest(), saga.sagaIdentificationStrategy(), sagaService);
             this.register(sebl);
         }

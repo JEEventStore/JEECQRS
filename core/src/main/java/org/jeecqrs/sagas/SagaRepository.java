@@ -24,7 +24,7 @@ package org.jeecqrs.sagas;
 /**
  * Provides the ability to load and save sagas.
  */
-public interface SagaRepository<E> {
+public interface SagaRepository<C, E> {
 
     /**
      * Retrieves the saga with the given identity from the repository.
@@ -34,7 +34,7 @@ public interface SagaRepository<E> {
      * @param sagaId  the id of the saga to load
      * @return  the saga, or null if no such saga exists
      */
-    <T extends Saga<E>> T sagaOfIdentity(Class<T> clazz, String sagaId);
+    <T extends Saga<C, E>> T sagaOfIdentity(Class<T> clazz, String sagaId);
 
     /**
      * Adds the given saga to the repository.
@@ -42,7 +42,7 @@ public interface SagaRepository<E> {
      * @param <T>  the type of the saga
      * @param saga   the saga
      */
-    <T extends Saga<E>> void add(T saga);
+    <T extends Saga<C, E>> void add(T saga);
 
     /**
      * Saves the given saga to the repository.
@@ -50,6 +50,6 @@ public interface SagaRepository<E> {
      * @param <T>  the type of the saga
      * @param saga   the saga
      */
-    <T extends Saga<E>> void save(T saga);
+    <T extends Saga<C, E>> void save(T saga);
 
 }

@@ -9,29 +9,31 @@ import org.jeecqrs.sagas.Saga;
 import org.jeecqrs.sagas.registry.AbstractSagaRegistry;
 
 /**
- *
+ * Automatically discovers and registers Sagas.
+ * All sagas must additionally declare a default constructor (private, protected,
+ * default or public).
  */
-public class AutoDiscoverSagaRegistry<E> extends AbstractSagaRegistry<E> {
+public class AutoDiscoverSagaRegistry<C, E> extends AbstractSagaRegistry<C, E> {
 
     private final Logger log = Logger.getLogger(AutoDiscoverSagaRegistry.class.getName());
 
     @Inject
-    private Instance<Saga<E>> sagaInstances;
+    private Instance<Saga<C, E>> sagaInstances;
 
     @PostConstruct
     public void startup() {
         log.info("Scanning sagas...");
-	Iterator<Saga<E>> it = select(sagaInstances);
+	Iterator<Saga<C, E>> it = select(sagaInstances);
         if (!it.hasNext())
             log.warning("No sagas found");
 	while (it.hasNext()) {
-            Saga<E> s = it.next();
+            Saga<C, E> s = it.next();
             log.fine("Discovered saga: " + s.getClass());
-            this.register((Class<? extends Saga<E>>) s.getClass());
+            this.register((Class<? extends Saga<C, E>>) s.getClass());
 	}
     }
 
-    protected Iterator<Saga<E>> select(Instance<Saga<E>> instances) {
+    protected Iterator<Saga<C, E>> select(Instance<Saga<C, E>> instances) {
         return instances.iterator();
     }
     
