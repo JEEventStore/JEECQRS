@@ -67,11 +67,13 @@ public interface Saga<C, E> extends ExpressEventInterest<E> {
     void handle(E event);
 
     /**
-     * Gets the strategy to identify sagas for incoming events.
+     * Specifies whether the current saga is completed.
+     * Completed sagas may be ignored by the infrastructure for efficiency reasons.
      * 
-     * @return  the strategy
+     * @return <pre>true</pre> if the saga is completed
      */
-    SagaIdentificationStrategy<E> sagaIdentificationStrategy();
+    boolean isCompleted();
+
 
     /**
      * Publishes the raised commands on the given command bus.
@@ -87,4 +89,18 @@ public interface Saga<C, E> extends ExpressEventInterest<E> {
      */
     void requestTimeouts(SagaTimeoutProvider<E> timeoutProvider);
 
+    /**
+     * Gets the strategy to identify sagas for incoming events.
+     * 
+     * @return  the strategy
+     */
+    SagaIdentificationStrategy<E> sagaIdentificationStrategy();
+
+    /**
+     * Gets the strategy to generate a commitId for sagas that handled an event.
+     * 
+     * @return  the strategy
+     */
+    SagaCommitIdGenerationStrategy<C, E> commitIdGenerationStrategy();
+    
 }

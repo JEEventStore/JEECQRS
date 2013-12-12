@@ -25,17 +25,21 @@ public class SagaService<C, E> {
 	if (saga == null) {
 	    saga = createNewInstance(sagaClass, sagaId);
             runSaga(saga, event);
-            sagaRepository.add(saga);
+            String commitId = saga.commitIdGenerationStrategy().generateCommitId(saga, event);
+            sagaRepository.add(saga, commitId);
         } else {
+            if (saga.isCompleted())
+                return;
             runSaga(saga, event);
-            sagaRepository.save(saga);
+            String commitId = saga.commitIdGenerationStrategy().generateCommitId(saga, event);
+            sagaRepository.save(saga, commitId);
         }
     }
 
     protected void runSaga(Saga<C, E> saga, E event) {
-            saga.handle(event);
-            saga.publishCommands(commandBus);
-            saga.requestTimeouts(sagaTracker);
+        saga.handle(event);
+        saga.publishCommands(commandBus);
+        saga.requestTimeouts(sagaTracker);
     }
 
     protected Saga<C, E> loadSaga(Class<? extends Saga<C, E>> sagaClass, String sagaId) {

@@ -41,15 +41,17 @@ public interface SagaRepository<C, E> {
      * 
      * @param <T>  the type of the saga
      * @param saga   the saga
+     * @param commitId  a unique commitId for this transaction
      */
-    <T extends Saga<C, E>> void add(T saga);
+    <T extends Saga<C, E>> void add(T saga, String commitId);
 
     /**
      * Saves the given saga to the repository.
      * 
      * @param <T>  the type of the saga
      * @param saga   the saga
+     * @param commitId  a unique commitId for this transaction
      */
-    <T extends Saga<C, E>> void save(T saga);
+    <T extends Saga<C, E>> void save(T saga, String commitId);
 
 }
