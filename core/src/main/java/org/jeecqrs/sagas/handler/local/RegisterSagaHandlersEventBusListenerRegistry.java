@@ -32,7 +32,7 @@ public class RegisterSagaHandlersEventBusListenerRegistry<C, E> extends Abstract
             this.register(ebl);
         log.info("Registering event listeners for sagas");
         for (Class<? extends Saga<C, E>> sagaClass : sagaRegistry.allSagas()) {
-            Saga<C, E> saga = SagaUtil.createInstance(sagaClass);
+            Saga<C, E> saga = SagaUtil.createStubInstance(sagaClass);
             SagaEventBusListener<C, E> sebl = new SagaEventBusListener<>(sagaClass,
                     saga.interest(), saga.sagaIdentificationStrategy(), sagaService);
             this.register(sebl);

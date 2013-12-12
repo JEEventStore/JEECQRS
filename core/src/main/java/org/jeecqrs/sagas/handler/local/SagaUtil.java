@@ -9,7 +9,7 @@ import org.jeecqrs.sagas.Saga;
  */
 public class SagaUtil {
 
-    public static <T extends Saga<?, ?>> T createInstance(Class<T> sagaClass) {
+    public static <T extends Saga<?, ?>> T createStubInstance(Class<T> sagaClass) {
         try {
             Constructor<?> constr = sagaClass.getDeclaredConstructor(new Class<?>[]{ });
             constr.setAccessible(true);
