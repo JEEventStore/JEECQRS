@@ -8,7 +8,8 @@ import javax.persistence.EntityManager;
 import org.jeecqrs.sagas.tracker.AbstractPollingSagaTracker;
 
 /**
- *
+ * Saga tracker that uses JPA to track timeout requests.
+ * Deploy as Singleton bean.
  */
 public class JPASagaTracker<E> extends AbstractPollingSagaTracker<E> {
 

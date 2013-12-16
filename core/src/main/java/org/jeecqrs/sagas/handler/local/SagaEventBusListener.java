@@ -3,39 +3,38 @@ package org.jeecqrs.sagas.handler.local;
 import org.jeecqrs.event.EventBusListener;
 import org.jeecqrs.event.EventInterest;
 import org.jeecqrs.sagas.Saga;
+import org.jeecqrs.sagas.SagaConfig;
 import org.jeecqrs.sagas.SagaIdentificationStrategy;
 
 /**
  *
  */
-class SagaEventBusListener<C, E> implements EventBusListener<E> {
+class SagaEventBusListener<E> implements EventBusListener<E> {
 
-    private final Class<? extends Saga<C, E>> sagaClass;
-    private final EventInterest<E> interest;
-    private final SagaIdentificationStrategy<E> identStrategy;
-    private final SagaService<C, E> sagaService;
+    private final Class<? extends Saga<E>> sagaClass;
+    private final SagaConfig<E> sagaConfig;
+    private final SagaService<E> sagaService;
 
-    SagaEventBusListener(
-            Class<? extends Saga<C, E>> sagaClass,
-            EventInterest<E> interest,
-            SagaIdentificationStrategy<E> identStrategy,
-            SagaService<C, E> sagaService) {
-        
+    public SagaEventBusListener(
+            Class<? extends Saga<E>> sagaClass,
+            SagaConfig<E> sagaConfig,
+            SagaService<E> sagaService) {
+
         this.sagaClass = sagaClass;
-        this.interest = interest;
-        this.identStrategy = identStrategy;
+        this.sagaConfig = sagaConfig;
         this.sagaService = sagaService;
     }
 
     @Override
     public void receiveEvent(E event) {
-        String sagaId = identStrategy.identifySaga(event);
+        SagaIdentificationStrategy<E> strat = sagaConfig.sagaIdentificationStrategy();
+        String sagaId = strat.identifySaga(event);
         sagaService.handle(sagaClass, sagaId, event);
     }
 
     @Override
-    public EventInterest<E> interest() {
-        return this.interest;
+    public EventInterest<E> interestedInEvents() {
+        return sagaConfig.interestedInEvents();
     }
     
 }

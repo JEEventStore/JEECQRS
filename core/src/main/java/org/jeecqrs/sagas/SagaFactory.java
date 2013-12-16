@@ -22,36 +22,16 @@
 package org.jeecqrs.sagas;
 
 /**
- * Provides the ability to load and save sagas.
+ * Provides the ability create sagas.
+ * @param <E>  the base event class
  */
-public interface SagaRepository<E> {
+public interface SagaFactory<E> {
 
     /**
-     * Retrieves the saga with the given identity from the repository.
-     * 
-     * @param <T>  the type of the saga to load
-     * @param clazz  the class of the saga to load
-     * @param sagaId  the id of the saga to load
-     * @return  the saga, or null if no such saga exists
+     * Creates a new instance of a saga with the given id.
+     * @param sagaId
+     * @return 
      */
-    <T extends Saga<E>> T sagaOfIdentity(Class<T> clazz, String sagaId);
-
-    /**
-     * Adds the given saga to the repository.
-     * 
-     * @param <T>  the type of the saga
-     * @param saga   the saga
-     * @param commitId  a unique commitId for this transaction
-     */
-    <T extends Saga<E>> void add(T saga, String commitId);
-
-    /**
-     * Saves the given saga to the repository.
-     * 
-     * @param <T>  the type of the saga
-     * @param saga   the saga
-     * @param commitId  a unique commitId for this transaction
-     */
-    <T extends Saga<E>> void save(T saga, String commitId);
+    Saga<E> createSaga(String sagaId);
 
 }

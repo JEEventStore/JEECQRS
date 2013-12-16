@@ -5,7 +5,7 @@ package org.jeecqrs.sagas;
  * 
  * @param <E>
  */
-public interface SagaCommitIdGenerationStrategy<C, E> {
+public interface SagaCommitIdGenerationStrategy<E> {
 
     /**
      * Returns a unique commitId to save the saga that has handled the given event.
@@ -14,6 +14,6 @@ public interface SagaCommitIdGenerationStrategy<C, E> {
      * @param event  the event
      * @return   the commitId
      */
-    String generateCommitId(Saga<C, E> saga, E event);
+    String generateCommitId(Saga<E> saga, E event);
     
 }

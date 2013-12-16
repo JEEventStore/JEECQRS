@@ -8,22 +8,22 @@ import javax.ejb.LockType;
 import org.jeecqrs.sagas.Saga;
 import org.jeecqrs.sagas.SagaRegistry;
 
-public abstract class AbstractSagaRegistry<C, E> implements SagaRegistry<C, E> {
+public abstract class AbstractSagaRegistry<E> implements SagaRegistry<E> {
 
     private final Logger log = Logger.getLogger(this.getClass().getName());
 
-    private final Set<Class<? extends Saga<C, E>>> sagas = new HashSet<>();
+    private final Set<Class<? extends Saga<E>>> sagas = new HashSet<>();
 
     @Override
     @Lock(LockType.READ)
-    public Set<Class<? extends Saga<C, E>>> allSagas() {
+    public Set<Class<? extends Saga<E>>> allSagas() {
         return new HashSet<>(sagas);
     }
 
     /**
      * Must only be called from {@code LockType.WRITE} protected methods.
      */
-    protected void register(Class<? extends Saga<C, E>> saga) {
+    protected void register(Class<? extends Saga<E>> saga) {
         sagas.add(saga);
     }
 

@@ -21,9 +21,6 @@
 
 package org.jeecqrs.sagas;
 
-import org.jeecqrs.command.CommandBus;
-import org.jeecqrs.event.ExpressEventInterest;
-
 /**
  * A saga is a long running process that reacts to events and issues commands.
  * Sagas are aware of the notion of time and can request a notification after
@@ -47,10 +44,9 @@ import org.jeecqrs.event.ExpressEventInterest;
  * since events can be delivered multiple times (the event dispatching system
  * has an at-least-once guarantee).
  * 
- * @param <C>  the base command type
  * @param <E>  the base event type
  */
-public interface Saga<C, E> extends ExpressEventInterest<E> {
+public interface Saga<E> {
 
     /**
      * Uniquely identifies the saga.
@@ -74,33 +70,4 @@ public interface Saga<C, E> extends ExpressEventInterest<E> {
      */
     boolean isCompleted();
 
-
-    /**
-     * Publishes the raised commands on the given command bus.
-     * 
-     * @param commandBus the command bus to use
-     */
-    void publishCommands(CommandBus<C> commandBus);
-
-    /**
-     * Requests the timeouts.
-     * 
-     * @param timeoutProvider  the timeout provider service
-     */
-    void requestTimeouts(SagaTimeoutProvider<E> timeoutProvider);
-
-    /**
-     * Gets the strategy to identify sagas for incoming events.
-     * 
-     * @return  the strategy
-     */
-    SagaIdentificationStrategy<E> sagaIdentificationStrategy();
-
-    /**
-     * Gets the strategy to generate a commitId for sagas that handled an event.
-     * 
-     * @return  the strategy
-     */
-    SagaCommitIdGenerationStrategy<C, E> commitIdGenerationStrategy();
-    
 }

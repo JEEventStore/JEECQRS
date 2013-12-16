@@ -5,8 +5,8 @@ import org.jeecqrs.sagas.Saga;
 /**
  *
  */
-public interface SagaService<C, E> {
+public interface SagaService<E> {
 
-    void handle(Class<? extends Saga<C, E>> sagaClass, String sagaId, E event);
+    void handle(Class<? extends Saga<E>> sagaClass, String sagaId, E event);
 
 }
