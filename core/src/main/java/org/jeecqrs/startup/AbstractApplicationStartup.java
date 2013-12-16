@@ -1,6 +1,15 @@
 package org.jeecqrs.startup;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.NotSupportedException;
+import javax.transaction.RollbackException;
+import javax.transaction.SystemException;
+import javax.transaction.UserTransaction;
 
 /**
  * Orchestrates the initialization of the various infrastructure services.
@@ -12,15 +21,35 @@ import javax.annotation.PostConstruct;
  */
 public abstract class AbstractApplicationStartup {
 
+    @Resource(name="transactionTimeout")
+    private int transactionTimeout = 84000;
+
+    @Resource
+    private UserTransaction userTransaction;
+
     @PostConstruct
     public void startup() {
-        wireUpEventListeners();
-        wireUpCommandHandlers();
-        wireUpDispatchScheduler();
-        wireUpSagaTracker();
-        replayEvents();
-        startDispatchScheduler();
-        startSagaTracker();
+        try {
+            userTransaction.setTransactionTimeout(transactionTimeout);
+        } catch (SystemException ex) {
+            Logger.getLogger(AbstractApplicationStartup.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            userTransaction.begin();
+            wireUpEventListeners();
+            wireUpCommandHandlers();
+            wireUpDispatchScheduler();
+            wireUpSagaTracker();
+            replayEvents();
+            startDispatchScheduler();
+            startSagaTracker();
+            userTransaction.commit();
+        } catch (NotSupportedException | SystemException | HeuristicMixedException |
+                HeuristicRollbackException | IllegalStateException | RollbackException |
+                SecurityException ex) {
+            // all of these are hard errors that prevent application startup
+            throw new RuntimeException(ex);
+        }
     }
 
     /**
