@@ -8,9 +8,10 @@ package org.jeecqrs.event;
 public interface ExpressEventInterest<E> {
     
     /**
-     * Specifies which events this is interested in.
+     * Specifies which events are of interest.
      * 
      * @return  the event interest
      */
-    EventInterest<E> interest();
+    EventInterest<E> interestedInEvents();
+    
 }

@@ -102,7 +102,7 @@ public class LocalEventBus<E> implements EventBus<E> {
 
             @Override
             public Set<String> interestedInTopics() {
-                EventInterest<E> interest = listener.interest();
+                EventInterest<E> interest = listener.interestedInEvents();
                 Set<String> result = new HashSet<>();
                 for (Class<? extends E> c : interest.interestEventTypes())
                     result.add(topicGenerator.topicFor(c));

@@ -39,7 +39,7 @@ public class AbstractEventBusListenerRegistry<E> implements EventBusListenerRegi
      * @param handler
      */
     protected void register(EventBusListener<E> handler) {
-        EventInterest<E> interest = handler.interest();
+        EventInterest<E> interest = handler.interestedInEvents();
         for (Class<? extends E> c : interest.interestEventTypes())
             register(handler, c);
     }
