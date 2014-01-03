@@ -66,7 +66,7 @@ public class SagaConfigBuilder<E> {
             throw new IllegalStateException("commitIdStrategy must not be null");
         if (eventInterest == null)
             throw new IllegalStateException("eventInterest must not be null");
-        return new DefaultSagaConfig<E>(sagaFactory, identStrategy,
+        return new DefaultSagaConfig<>(sagaFactory, identStrategy,
                 commitIdStrategy, eventInterest);
     }
     
