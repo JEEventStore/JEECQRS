@@ -21,6 +21,7 @@
 
 package org.jeecqrs.sagas.handler.local;
 
+import org.jeecqrs.sagas.handler.SagaService;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;

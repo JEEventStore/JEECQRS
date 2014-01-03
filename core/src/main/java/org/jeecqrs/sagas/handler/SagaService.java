@@ -19,44 +19,15 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package org.jeecqrs.sagas.handler.local;
+package org.jeecqrs.sagas.handler;
 
-import org.jeecqrs.sagas.handler.SagaService;
-import org.jeecqrs.event.EventBusListener;
-import org.jeecqrs.event.EventInterest;
 import org.jeecqrs.sagas.Saga;
-import org.jeecqrs.sagas.SagaConfig;
-import org.jeecqrs.sagas.SagaIdentificationStrategy;
 
 /**
  *
  */
-class SagaEventBusListener<E> implements EventBusListener<E> {
+public interface SagaService<E> {
 
-    private final Class<? extends Saga<E>> sagaClass;
-    private final SagaConfig<E> sagaConfig;
-    private final SagaService<E> sagaService;
+    void handle(Class<? extends Saga<E>> sagaClass, String sagaId, E event);
 
-    public SagaEventBusListener(
-            Class<? extends Saga<E>> sagaClass,
-            SagaConfig<E> sagaConfig,
-            SagaService<E> sagaService) {
-
-        this.sagaClass = sagaClass;
-        this.sagaConfig = sagaConfig;
-        this.sagaService = sagaService;
-    }
-
-    @Override
-    public void receiveEvent(E event) {
-        SagaIdentificationStrategy<E> strat = sagaConfig.sagaIdentificationStrategy();
-        String sagaId = strat.identifySaga(event);
-        sagaService.handle(sagaClass, sagaId, event);
-    }
-
-    @Override
-    public EventInterest<E> interestedInEvents() {
-        return sagaConfig.interestedInEvents();
-    }
-    
 }
