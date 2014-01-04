@@ -21,19 +21,52 @@
 
 package org.jeecqrs.command.bus.simple;
 
-import javax.ejb.Asynchronous;
+import java.io.Serializable;
+import java.util.logging.Logger;
+import javax.annotation.Resource;
+import javax.ejb.TimedObject;
+import javax.ejb.Timeout;
+import javax.ejb.Timer;
+import javax.ejb.TimerConfig;
+import javax.ejb.TimerService;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import org.jeecqrs.command.CommandBus;
 
 /**
  * A command bus that calls command handlers directly, but asynchronously.
  * Deploy as stateless bean.
  */
-public class SimpleAsyncCommandBus<C> extends AbstractSimpleCommandBus<C> implements CommandBus<C> {
+public class SimpleAsyncCommandBus<C extends Serializable> extends AbstractSimpleCommandBus<C>
+        implements CommandBus<C>, TimedObject {
+
+    private static final Logger log = Logger.getLogger(SimpleAsyncCommandBus.class.getName());
+
+    @Resource
+    private TimerService timerService;
+    
+    @Resource(name = "retryInterval")
+    private long retryInterval = 100;
 
     @Override
-    @Asynchronous
     public void send(C command) {
-        this.callHandler(command);
+        TimerConfig config = new TimerConfig(command, true);
+        timerService.createIntervalTimer(0, retryInterval, config);
+    } 
+    
+    @Timeout
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @Override
+    public void ejbTimeout(Timer timer) {
+        try {
+            C command = (C) timer.getInfo();
+            this.callHandler(command);
+            // if we reach this line, no exception was thrown, i.e., the
+            // command was handled successfully and the timer can be cancelled
+            timer.cancel();
+        } catch (Exception e) {
+            log.severe("Error calling command handler: " + e.getMessage());
+        }
     }
 
 }
