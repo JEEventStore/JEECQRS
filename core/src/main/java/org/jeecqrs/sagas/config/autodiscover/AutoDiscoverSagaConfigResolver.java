@@ -35,6 +35,7 @@ import org.jeecqrs.sagas.Saga;
 import org.jeecqrs.sagas.SagaConfig;
 import org.jeecqrs.sagas.SagaConfigResolver;
 import org.jeecqrs.sagas.registry.autodiscover.AutoDiscoverSagaRegistry;
+import org.jodah.typetools.TypeResolver;
 
 /**
  * Resolves saga configs by searching for suitable {@link SagaConfigProvider}s.
@@ -44,30 +45,37 @@ public class AutoDiscoverSagaConfigResolver<E> implements SagaConfigResolver<E> 
 
     private final Logger log = Logger.getLogger(AutoDiscoverSagaConfigResolver.class.getName());
 
-    private final Map<Class<? extends Saga<E>>, SagaConfig<E>> registry = new HashMap<>();
+    private final Map<Class<? extends Saga<E>>, SagaConfig<? extends Saga<E>, E>> registry = new HashMap<>();
 
     @Inject
-    private Instance<SagaConfigProvider<E>> providers;
+    private Instance<SagaConfigProvider<? extends Saga<E>, E>> providers;
 
     @PostConstruct
     public void startup() {
         log.info("Scanning saga config providers...");
-	Iterator<SagaConfigProvider<E>> it = select(providers);
+	Iterator<SagaConfigProvider<? extends Saga<E>, E>> it = select(providers);
         if (!it.hasNext())
             log.warning("No saga config providers found");
 	while (it.hasNext()) {
-            SagaConfigProvider<E> provider = it.next();
-            Class<? extends Saga<E>> clazz = provider.sagaClass();
+            SagaConfigProvider<? extends Saga<E>, E> provider = it.next();
+            Class<?>[] typeArguments = TypeResolver.resolveRawArguments(SagaConfigProvider.class,
+                    provider.getClass());
+            Class<? extends Saga<E>> sagaClass = (Class) typeArguments[0];
+            if (TypeResolver.Unknown.class.equals(sagaClass))
+                throw new IllegalStateException("Saga type parameter missing on " +
+                        SagaConfigProvider.class.getSimpleName() + " for class " +
+                        provider.getClass().getName());
             log.log(Level.INFO, "Discovered saga config provider {0} for saga {1}",
-                    new Object[]{provider.getClass(), clazz});
-            SagaConfig<E> config = provider.sagaConfig();
+                    new Object[]{provider.getClass(), sagaClass});
+            SagaConfig<? extends Saga<E>, E> config = provider.sagaConfig();
             if (config == null)
                 throw new IllegalStateException("Provider must not return null SagaConfig");
-            register(clazz, config);
+            register(sagaClass, config);
 	}
     }
 
-    protected Iterator<SagaConfigProvider<E>> select(Instance<SagaConfigProvider<E>> providers) {
+    protected Iterator<SagaConfigProvider<? extends Saga<E>, E>> select(
+            Instance<SagaConfigProvider<? extends Saga<E>, E>> providers) {
         return providers.iterator();
     }
 
@@ -78,13 +86,13 @@ public class AutoDiscoverSagaConfigResolver<E> implements SagaConfigResolver<E> 
      * @param clazz   the saga class
      * @param config  the saga config
      */
-    protected void register(Class<? extends Saga<E>> clazz, SagaConfig<E> config) {
+    protected void register(Class<? extends Saga<E>> clazz, SagaConfig<? extends Saga<E>, E> config) {
         registry.put(clazz, config);
     }
 
     @Override
     @Lock(LockType.READ)
-    public SagaConfig<E> configure(Class<? extends Saga<E>> sagaType) {
+    public SagaConfig<? extends Saga<E>, E> configure(Class<? extends Saga<E>> sagaType) {
         return registry.get(sagaType);
     }
     

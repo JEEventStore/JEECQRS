@@ -26,21 +26,16 @@ import org.jeecqrs.sagas.SagaConfig;
 
 /**
  * Provides the ability to provide saga configs.
+ * 
+ * @param <S>  the saga type this provides configs for
  */
-public interface SagaConfigProvider<E> {
-
-    /**
-     * Specifies the saga class this provider configures.
-     * 
-     * @return  the class
-     */
-    Class<? extends Saga<E>> sagaClass();
+public interface SagaConfigProvider<S extends Saga<E>, E> {
 
     /**
      * Provides the saga config.
      * 
      * @return  the saga config
      */
-    SagaConfig<E> sagaConfig();
+    SagaConfig<S, E> sagaConfig();
     
 }

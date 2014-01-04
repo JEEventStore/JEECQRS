@@ -21,12 +21,15 @@
 
 package org.jeecqrs.sagas.handler.local;
 
+import java.util.Set;
+import java.util.logging.Level;
 import org.jeecqrs.sagas.handler.SagaService;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import org.jeecqrs.event.EventBusListener;
 import org.jeecqrs.event.EventBusListenerRegistry;
+import org.jeecqrs.event.EventInterest;
 import org.jeecqrs.event.registry.AbstractEventBusListenerRegistry;
 import org.jeecqrs.sagas.Saga;
 import org.jeecqrs.sagas.SagaConfig;
@@ -38,7 +41,8 @@ import org.jeecqrs.sagas.SagaRegistry;
  */
 public class RegisterSagaHandlersEventBusListenerRegistry<E> extends AbstractEventBusListenerRegistry<E> {
 
-    private final Logger log = Logger.getLogger(RegisterSagaHandlersEventBusListenerRegistry.class.getName());
+    private final Logger log =Logger.getLogger(
+            RegisterSagaHandlersEventBusListenerRegistry.class.getName());
     
     @EJB(name="listenerRegistry")
     private EventBusListenerRegistry<E> delegateRegistry;
@@ -54,16 +58,40 @@ public class RegisterSagaHandlersEventBusListenerRegistry<E> extends AbstractEve
     
     @PostConstruct
     public void startup() {
-        log.info("Registering event listeners from delegate registry");
+        log.fine("Registering event listeners from delegate registry");
         for (EventBusListener<E> ebl : delegateRegistry.allListeners())
             this.register(ebl);
         log.info("Registering event listeners for sagas");
-        for (Class<? extends Saga<E>> sagaClass : sagaRegistry.allSagas()) {
-            SagaConfig<E> config = sagaConfigResolver.configure(sagaClass);
-            SagaEventBusListener<E> sebl = new SagaEventBusListener<>(sagaClass,
-                    config, sagaService);
-            this.register(sebl);
+        Set<Class<? extends Saga<E>>> sagas = sagaRegistry.allSagas();
+        if (sagas.isEmpty())
+            log.info("No sagas found");
+        else
+            registerAll(sagas);
+    }
+
+    protected void registerAll(Set<Class<? extends Saga<E>>> sagas) {
+        for (Class<? extends Saga<E>> sagaClass : sagas)
+            register(sagaClass);
+    }
+
+    protected void register(Class<? extends Saga<E>> sagaClass) {
+        SagaConfig<? extends Saga<E>, E> config = sagaConfigResolver.configure(sagaClass);
+        log.log(Level.INFO, "Registering {0} for {1}",
+                new Object[]{sagaClass.getSimpleName(), buildEventLogString(config.interestedInEvents())});
+        this.register(new SagaEventBusListener(sagaClass, config, sagaService));
+    }
+
+    private String buildEventLogString(EventInterest<E> interest) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("[");
+        int c = 0;
+        for (Class<? extends E> cls : interest.interestEventTypes()) {
+            if (c++ > 0)
+                builder.append(", ");
+            builder.append(cls.getSimpleName());
         }
+        builder.append("]");
+        return builder.toString();
     }
     
 }

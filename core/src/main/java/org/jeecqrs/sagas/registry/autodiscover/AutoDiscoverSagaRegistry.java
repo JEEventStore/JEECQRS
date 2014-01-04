@@ -29,6 +29,7 @@ import javax.inject.Inject;
 import org.jeecqrs.sagas.Saga;
 import org.jeecqrs.sagas.config.autodiscover.SagaConfigProvider;
 import org.jeecqrs.sagas.registry.AbstractSagaRegistry;
+import org.jodah.typetools.TypeResolver;
 
 /**
  * Automatically discovers and registers Sagas using {@link SagaConfigProvider}.
@@ -38,23 +39,27 @@ public class AutoDiscoverSagaRegistry<E> extends AbstractSagaRegistry<E> {
     private final Logger log = Logger.getLogger(AutoDiscoverSagaRegistry.class.getName());
 
     @Inject
-    private Instance<RegisterSaga<E>> instances;
+    private Instance<RegisterSaga<Saga<E>>> instances;
 
     @PostConstruct
     public void startup() {
         log.info("Scanning sagas...");
-	Iterator<RegisterSaga<E>> it = select(instances);
+	Iterator<RegisterSaga<Saga<E>>> it = select(instances);
         if (!it.hasNext())
             log.warning("No sagas found");
 	while (it.hasNext()) {
-            RegisterSaga<E> r = it.next();
-            Class<? extends Saga<E>> sagaClass = r.sagaClass();
-            log.fine("Discovered saga: " + sagaClass);
+            RegisterSaga<Saga<E>> r = it.next();
+            Class<?>[] typeArguments = TypeResolver.resolveRawArguments(RegisterSaga.class, r.getClass());
+            Class<? extends Saga<E>> sagaClass = (Class) typeArguments[0];
+            if (TypeResolver.Unknown.class.equals(sagaClass))
+                throw new IllegalStateException("Saga type parameter missing on " +
+                        RegisterSaga.class.getSimpleName() + " for class " + r.getClass().getName());
+            log.info("Discovered saga: " + sagaClass.getSimpleName());
             this.register(sagaClass);
 	}
     }
 
-    protected Iterator<RegisterSaga<E>> select(Instance<RegisterSaga<E>> instances) {
+    protected Iterator<RegisterSaga<Saga<E>>> select(Instance<RegisterSaga<Saga<E>>> instances) {
         return instances.iterator();
     }
     

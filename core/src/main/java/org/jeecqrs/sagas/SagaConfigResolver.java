@@ -26,6 +26,6 @@ package org.jeecqrs.sagas;
  */
 public interface SagaConfigResolver<E> {
 
-    SagaConfig<E> configure(Class<? extends Saga<E>> sagaType);
+    SagaConfig<? extends Saga<E>, E> configure(Class<? extends Saga<E>> sagaType);
 
 }

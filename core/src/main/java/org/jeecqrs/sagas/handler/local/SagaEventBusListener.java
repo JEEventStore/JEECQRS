@@ -31,16 +31,16 @@ import org.jeecqrs.sagas.SagaIdentificationStrategy;
 /**
  *
  */
-class SagaEventBusListener<E> implements EventBusListener<E> {
+class SagaEventBusListener<S extends Saga<E>, E> implements EventBusListener<E> {
 
-    private final Class<? extends Saga<E>> sagaClass;
-    private final SagaConfig<E> sagaConfig;
-    private final SagaService<E> sagaService;
+    private final Class<S> sagaClass;
+    private final SagaConfig<S, E> sagaConfig;
+    private final SagaService<S, E> sagaService;
 
     public SagaEventBusListener(
-            Class<? extends Saga<E>> sagaClass,
-            SagaConfig<E> sagaConfig,
-            SagaService<E> sagaService) {
+            Class<S> sagaClass,
+            SagaConfig<S, E> sagaConfig,
+            SagaService<S, E> sagaService) {
 
         this.sagaClass = sagaClass;
         this.sagaConfig = sagaConfig;
@@ -49,7 +49,7 @@ class SagaEventBusListener<E> implements EventBusListener<E> {
 
     @Override
     public void receiveEvent(E event) {
-        SagaIdentificationStrategy<E> strat = sagaConfig.sagaIdentificationStrategy();
+        SagaIdentificationStrategy<S, E> strat = sagaConfig.sagaIdentificationStrategy();
         String sagaId = strat.identifySaga(event);
         sagaService.handle(sagaClass, sagaId, event);
     }
@@ -57,6 +57,11 @@ class SagaEventBusListener<E> implements EventBusListener<E> {
     @Override
     public EventInterest<E> interestedInEvents() {
         return sagaConfig.interestedInEvents();
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + "[saga=" + sagaClass.getSimpleName() + "]";
     }
     
 }

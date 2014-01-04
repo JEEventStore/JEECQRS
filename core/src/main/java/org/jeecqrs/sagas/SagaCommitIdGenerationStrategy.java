@@ -24,9 +24,10 @@ package org.jeecqrs.sagas;
 /**
  * Provides the ability to generate a commitId for a SagaRepository transaction.
  * 
- * @param <E>
+ * @param <S>  the saga type this generates commit ids for
+ * @param <E>  the base event type
  */
-public interface SagaCommitIdGenerationStrategy<E> {
+public interface SagaCommitIdGenerationStrategy<S extends Saga<E>, E> {
 
     /**
      * Returns a unique commitId to save the saga that has handled the given event.
@@ -35,6 +36,6 @@ public interface SagaCommitIdGenerationStrategy<E> {
      * @param event  the event
      * @return   the commitId
      */
-    String generateCommitId(Saga<E> saga, E event);
+    String generateCommitId(S saga, E event);
     
 }

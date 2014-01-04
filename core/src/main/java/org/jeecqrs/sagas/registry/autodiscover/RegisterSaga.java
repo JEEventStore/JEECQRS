@@ -26,14 +26,9 @@ import org.jeecqrs.sagas.Saga;
 /**
  * Provides the ability to register a saga.
  * Implementing classes must provide a public default constructor.
+ * 
+ * @param <S>  the saga type to register
  */
-public interface RegisterSaga<E> {
-
-    /**
-     * Specifies the saga class to be registered.
-     * 
-     * @return  the class
-     */
-    Class<? extends Saga<E>> sagaClass();
+public interface RegisterSaga<S extends Saga<?>> {
 
 }

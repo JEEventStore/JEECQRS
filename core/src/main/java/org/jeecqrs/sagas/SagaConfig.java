@@ -25,27 +25,29 @@ import org.jeecqrs.event.ExpressEventInterest;
 
 /**
  *
+ * @param <S>  the saga type this saga configures
+ * @param <E>  the base event type
  */
-public interface SagaConfig<E> extends ExpressEventInterest<E> {
+public interface SagaConfig<S extends Saga<E>, E> extends ExpressEventInterest<E> {
 
     /**
      * Specifies a factory to create new instances of the saga.
      * @return 
      */
-    SagaFactory<E> sagaFactory();
+    SagaFactory<S> sagaFactory();
     
     /**
      * Gets the strategy to identify sagas for incoming events.
      * 
      * @return  the strategy
      */
-    SagaIdentificationStrategy<E> sagaIdentificationStrategy();
+    SagaIdentificationStrategy<S, E> sagaIdentificationStrategy();
 
     /**
      * Gets the strategy to generate a commitId for sagas that handled an event.
      * 
      * @return  the strategy
      */
-    SagaCommitIdGenerationStrategy<E> sagaCommitIdGenerationStrategy();
+    SagaCommitIdGenerationStrategy<S, E> sagaCommitIdGenerationStrategy();
     
 }

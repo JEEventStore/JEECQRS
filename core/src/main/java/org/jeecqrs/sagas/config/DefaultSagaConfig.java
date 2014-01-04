@@ -22,6 +22,7 @@
 package org.jeecqrs.sagas.config;
 
 import org.jeecqrs.event.EventInterest;
+import org.jeecqrs.sagas.Saga;
 import org.jeecqrs.sagas.SagaCommitIdGenerationStrategy;
 import org.jeecqrs.sagas.SagaConfig;
 import org.jeecqrs.sagas.SagaFactory;
@@ -30,17 +31,17 @@ import org.jeecqrs.sagas.SagaIdentificationStrategy;
 /**
  *
  */
-public class DefaultSagaConfig<E> implements SagaConfig<E> {
+public class DefaultSagaConfig<S extends Saga<E>, E> implements SagaConfig<S, E> {
 
-    private final SagaFactory<E> sagaFactory;
-    private final SagaIdentificationStrategy<E> identStrategy;
-    private final SagaCommitIdGenerationStrategy<E> commitIdStrategy;
+    private final SagaFactory<S> sagaFactory;
+    private final SagaIdentificationStrategy<S, E> identStrategy;
+    private final SagaCommitIdGenerationStrategy<S, E> commitIdStrategy;
     private final EventInterest<E> eventInterest;
 
     public DefaultSagaConfig(
-            SagaFactory<E> sagaFactory,
-            SagaIdentificationStrategy<E> identStrategy,
-            SagaCommitIdGenerationStrategy<E> commitIdStrategy,
+            SagaFactory<S> sagaFactory,
+            SagaIdentificationStrategy<S, E> identStrategy,
+            SagaCommitIdGenerationStrategy<S, E> commitIdStrategy,
             EventInterest<E> eventInterest) {
 
         this.sagaFactory = sagaFactory;
@@ -50,17 +51,17 @@ public class DefaultSagaConfig<E> implements SagaConfig<E> {
     }
 
     @Override
-    public SagaFactory<E> sagaFactory() {
+    public SagaFactory<S> sagaFactory() {
         return sagaFactory;
     }
 
     @Override
-    public SagaIdentificationStrategy<E> sagaIdentificationStrategy() {
+    public SagaIdentificationStrategy<S, E> sagaIdentificationStrategy() {
         return identStrategy;
     }
 
     @Override
-    public SagaCommitIdGenerationStrategy<E> sagaCommitIdGenerationStrategy() {
+    public SagaCommitIdGenerationStrategy<S, E> sagaCommitIdGenerationStrategy() {
         return commitIdStrategy;
     }
 

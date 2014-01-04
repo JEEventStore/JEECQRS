@@ -26,10 +26,10 @@ import java.util.UUID;
 /**
  * Generates a unique commitId using {@link UUID#randomUUID()}.
  */
-public class RandomCommitIdGenerator<E> implements SagaCommitIdGenerationStrategy<E> {
+public class RandomCommitIdGenerator<S extends Saga<E>, E> implements SagaCommitIdGenerationStrategy<S, E> {
 
     @Override
-    public String generateCommitId(Saga<E> saga, E event) {
+    public String generateCommitId(S saga, E event) {
         return UUID.randomUUID().toString();
     }
     

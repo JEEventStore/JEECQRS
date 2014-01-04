@@ -26,7 +26,7 @@ package org.jeecqrs.sagas;
  * 
  * @param <E>
  */
-public interface SagaIdentificationStrategy<E> {
+public interface SagaIdentificationStrategy<S extends Saga<E>, E> {
 
     /**
      * Returns the identity of the saga that handles the given event.

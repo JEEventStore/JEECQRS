@@ -22,6 +22,7 @@
 package org.jeecqrs.sagas.config;
 
 import org.jeecqrs.event.EventInterest;
+import org.jeecqrs.sagas.Saga;
 import org.jeecqrs.sagas.SagaCommitIdGenerationStrategy;
 import org.jeecqrs.sagas.SagaConfig;
 import org.jeecqrs.sagas.SagaFactory;
@@ -30,34 +31,34 @@ import org.jeecqrs.sagas.SagaIdentificationStrategy;
 /**
  *
  */
-public class SagaConfigBuilder<E> {
+public class SagaConfigBuilder<S extends Saga<E>, E> {
 
-    private SagaFactory<E> sagaFactory;
-    private SagaIdentificationStrategy<E> identStrategy;
-    private SagaCommitIdGenerationStrategy<E> commitIdStrategy;
+    private SagaFactory<S> sagaFactory;
+    private SagaIdentificationStrategy<S, E> identStrategy;
+    private SagaCommitIdGenerationStrategy<S, E> commitIdStrategy;
     private EventInterest<E> eventInterest;
 
-    public SagaConfigBuilder<E> setSagaFactory(SagaFactory<E> factory) {
+    public SagaConfigBuilder<S, E> setSagaFactory(SagaFactory<S> factory) {
         this.sagaFactory = factory;
         return this;
     }
 
-    public SagaConfigBuilder<E> setSagaIdentificationStrategy(SagaIdentificationStrategy<E> strategy) {
+    public SagaConfigBuilder<S, E> setSagaIdentificationStrategy(SagaIdentificationStrategy<S, E> strategy) {
         this.identStrategy = strategy;
         return this;
     }
 
-    public SagaConfigBuilder<E> setSagaCommitIdGenerationStrategy(SagaCommitIdGenerationStrategy<E> strategy) {
+    public SagaConfigBuilder<S, E> setSagaCommitIdGenerationStrategy(SagaCommitIdGenerationStrategy<S, E> strategy) {
         this.commitIdStrategy = strategy;
         return this;
     }
 
-    public SagaConfigBuilder<E> setEventInterest(EventInterest<E> interest) {
+    public SagaConfigBuilder<S, E> setEventInterest(EventInterest<E> interest) {
         this.eventInterest = interest;
         return this;
     }
 
-    public SagaConfig<E> build() {
+    public SagaConfig<S, E> build() {
         if (sagaFactory == null)
             throw new IllegalStateException("sagaFactory must not be null");
         if (identStrategy == null)

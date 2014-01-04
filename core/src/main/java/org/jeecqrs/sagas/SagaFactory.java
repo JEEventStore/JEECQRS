@@ -23,15 +23,16 @@ package org.jeecqrs.sagas;
 
 /**
  * Provides the ability create sagas.
- * @param <E>  the base event class
+ * 
+ * @param <S>  the saga type this factory creates
  */
-public interface SagaFactory<E> {
+public interface SagaFactory<S extends Saga<?>> {
 
     /**
      * Creates a new instance of a saga with the given id.
      * @param sagaId
      * @return 
      */
-    Saga<E> createSaga(String sagaId);
+    S createSaga(String sagaId);
 
 }

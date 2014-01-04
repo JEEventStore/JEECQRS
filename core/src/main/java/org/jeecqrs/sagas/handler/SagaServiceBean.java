@@ -22,6 +22,8 @@
 package org.jeecqrs.sagas.handler;
 
 import javax.ejb.EJB;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import org.jeecqrs.sagas.Saga;
 import org.jeecqrs.sagas.SagaCommitIdGenerationStrategy;
 import org.jeecqrs.sagas.SagaConfig;
@@ -33,7 +35,7 @@ import org.jeecqrs.sagas.SagaRepository;
  *
  * @param <E>  the base event type
  */
-public class SagaServiceBean<E> implements SagaService<E> {
+public class SagaServiceBean<S extends Saga<E>, E> implements SagaService<S, E> {
 
     @EJB(name="sagaRepository")
     private SagaRepository sagaRepository;
@@ -42,9 +44,10 @@ public class SagaServiceBean<E> implements SagaService<E> {
     private SagaConfigResolver<E> sagaConfigResolver;
 
     @Override
-    public void handle(Class<? extends Saga<E>> sagaClass, String sagaId, E event) {
-        SagaConfig<E> config = sagaConfigResolver.configure(sagaClass);
-        Saga<E> saga = loadSaga(sagaClass, sagaId);
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void handle(Class<S> sagaClass, String sagaId, E event) {
+        SagaConfig<S, E> config = (SagaConfig) sagaConfigResolver.configure(sagaClass);
+        S saga = loadSaga(sagaClass, sagaId);
 	if (saga != null) {
             if (saga.isCompleted())
                 return;
@@ -63,20 +66,17 @@ public class SagaServiceBean<E> implements SagaService<E> {
         return this.sagaRepository;
     }
 
-    protected Saga<E> loadSaga(Class<? extends Saga<E>> sagaClass, String sagaId) {
+    protected S loadSaga(Class<S> sagaClass, String sagaId) {
 	return this.sagaRepository().sagaOfIdentity(sagaClass, sagaId);
     }
 
-    protected String commitId(Saga<E> saga, E event, SagaConfig<E> config) {
-        SagaCommitIdGenerationStrategy<E> strat = config.sagaCommitIdGenerationStrategy();
+    protected String commitId(S saga, E event, SagaConfig<S, E> config) {
+        SagaCommitIdGenerationStrategy<S, E> strat = config.sagaCommitIdGenerationStrategy();
         return strat.generateCommitId(saga, event);
     }
 
-    protected Saga<E> createNewInstance(
-            Class<? extends Saga<E>> sagaClass,
-            String sagaId,
-            SagaConfig<E> sagaConfig) {
-        SagaFactory<E> factory = sagaConfig.sagaFactory();
+    protected S createNewInstance(Class<S> sagaClass, String sagaId, SagaConfig<S, E> sagaConfig) {
+        SagaFactory<S> factory = sagaConfig.sagaFactory();
         return factory.createSaga(sagaId);
     }
 
