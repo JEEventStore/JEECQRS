@@ -73,7 +73,7 @@ public class LocalEventBus<E> implements EventBus<E> {
     @Override
     @Lock(LockType.READ)
     public void dispatch(E event) {
-	log.info("Dispatching event " + event.toString());
+	log.log(Level.FINER, "Dispatching event: {0}", event);
         Class<? extends E> eventClass = (Class<? extends E>) event.getClass();
         mtp.publish(topicGenerator.topicFor(eventClass), event);
         mtp.publish(topicGenerator.wildcardTopic(), event);
