@@ -22,12 +22,14 @@
 package org.jeecqrs.command.registry.autodiscover;
 
 import java.util.Iterator;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import org.jeecqrs.command.CommandHandler;
 import org.jeecqrs.command.registry.AbstractCommandHandlerRegistry;
+import org.jodah.typetools.TypeResolver;
 
 /**
  *
@@ -37,23 +39,26 @@ public class AutoDiscoverCommandHandlerRegistry<C> extends AbstractCommandHandle
     private Logger log = Logger.getLogger(AutoDiscoverCommandHandlerRegistry.class.getName());
 
     @Inject
-    private Instance<CommandHandler<C>> handlerInstances;
+    private Instance<AutoDiscoveredCommandHandler<C>> handlerInstances;
 
     @PostConstruct
     public void startup() {
         log.info("Scanning command handlers");
-	Iterator<CommandHandler<C>> it = select(handlerInstances);
+	Iterator<AutoDiscoveredCommandHandler<C>> it = select(handlerInstances);
         if (!it.hasNext())
             log.warning("No command handlers found");
 	while (it.hasNext()) {
-            CommandHandler h = it.next();
-            log.fine("Discovered command handler: " + h);
-            this.register(h);
+            AutoDiscoveredCommandHandler<C> h = it.next();
+            Class<? extends C> commandType = h.handledCommandType();
+            log.log(Level.INFO, "Discovered command handler {0} for command {1}",
+                    new Object[]{h.getClass(), commandType.getSimpleName()});
+            this.register(commandType, h);
 	}
     }
 
-    protected Iterator<CommandHandler<C>> select(Instance<CommandHandler<C>> instances) {
+    protected Iterator<AutoDiscoveredCommandHandler<C>> select(
+            Instance<AutoDiscoveredCommandHandler<C>> instances) {
         return instances.iterator();
-    }
+    } 
     
 }
