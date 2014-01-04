@@ -53,13 +53,13 @@ public abstract class AbstractCommandHandlerRegistry<C> implements CommandHandle
     /**
      * Must only be called from {@code LockType.WRITE} protected methods.
      */
-    protected void register(CommandHandler<C> handler) {
-        Class<? extends C> clazz = handler.handledCommandType();
+    protected void register(Class<? extends C> commandType, CommandHandler<C> handler) {
         log.log(Level.INFO, "Registering CommandHandler for class {0}: {1}",
-                new Object[]{clazz.getCanonicalName(), handler});
-        if (lookup(clazz) != null)
-            throw new IllegalStateException("Handler for " + clazz.getCanonicalName() + " already registered");
-        handlers.put(clazz, handler);
+                new Object[]{ commandType.getCanonicalName(), handler });
+        if (lookup(commandType) != null)
+            throw new IllegalStateException("Handler for " + commandType.getCanonicalName() + 
+                    " already registered");
+        handlers.put(commandType, handler);
     }
 
     /**
