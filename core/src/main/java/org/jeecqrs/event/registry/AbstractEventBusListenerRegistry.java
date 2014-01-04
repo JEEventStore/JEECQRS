@@ -36,7 +36,7 @@ import org.jeecqrs.event.EventBusListenerRegistry;
 
 public class AbstractEventBusListenerRegistry<E> implements EventBusListenerRegistry<E> {
 
-    private final Logger log = Logger.getLogger(this.getClass().getName());
+    private static final Logger log = Logger.getLogger(AbstractEventBusListenerRegistry.class.getName());
 
     private final Map<Class<? extends E>, Set<EventBusListener<E>>> handlers = new HashMap<>();
 
@@ -71,9 +71,8 @@ public class AbstractEventBusListenerRegistry<E> implements EventBusListenerRegi
      * @param clazz
      */
     protected void register(EventBusListener<E> handler, Class<? extends E> clazz) {
-        log.log(Level.INFO, "Registering {0} for event {1}: {2}",
-                new Object[]{EventBusListener.class.getName(),
-                    clazz.getName(), handler});
+        log.log(Level.FINE, "Register {1} for event {0}",
+                new Object[]{ clazz.getSimpleName(), handler});
         Set<EventBusListener<E>> set = handlers.get(clazz);
         if (set == null) {
             set = new HashSet<>();
