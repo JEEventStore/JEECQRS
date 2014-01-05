@@ -25,6 +25,7 @@ import org.jeecqrs.messaging.MultiTopicPublisher;
 import org.jeecqrs.messaging.MultiTopicSubscriber;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -34,6 +35,8 @@ import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 import org.jeecqrs.event.EventBus;
 import org.jeecqrs.event.EventInterest;
 import org.jeecqrs.event.EventBusListener;
@@ -49,8 +52,8 @@ public class LocalEventBus<E> implements EventBus<E> {
     @EJB(name="multiTopicPublisher")
     private MultiTopicPublisher mtp;
 
-    @EJB(name="listenerRegistry")
-    private EventBusListenerRegistry<E> listenerRegistry;
+    @Inject
+    private Instance<EventBusListenerRegistry<E>> listenerRegistries;
 
     @Resource(name="topicGenerationStrategy")
     private Class<? extends TopicGenerationStrategy> topicGeneratorClass = DefaultTopicGenerationStrategy.class;
@@ -80,9 +83,13 @@ public class LocalEventBus<E> implements EventBus<E> {
     }
 
     protected void subscribeListeners() {
-        Set<EventBusListener<E>> listeners = listenerRegistry.allListeners();
-        for (EventBusListener<E> l : listeners)
-            subscribe(l);
+        Iterator<EventBusListenerRegistry<E>> it = listenerRegistries.iterator();
+        while (it.hasNext()) {
+            EventBusListenerRegistry<E> listenerRegistry = it.next();
+            Set<EventBusListener<E>> listeners = listenerRegistry.allListeners();
+            for (EventBusListener<E> l : listeners)
+                subscribe(l);
+        }
     }
 
     protected void subscribe(EventBusListener<E> listener) {
