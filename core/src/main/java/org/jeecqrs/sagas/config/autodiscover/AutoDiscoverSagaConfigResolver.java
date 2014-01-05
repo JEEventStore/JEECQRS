@@ -34,8 +34,6 @@ import javax.inject.Inject;
 import org.jeecqrs.sagas.Saga;
 import org.jeecqrs.sagas.SagaConfig;
 import org.jeecqrs.sagas.SagaConfigResolver;
-import org.jeecqrs.sagas.registry.autodiscover.AutoDiscoverSagaRegistry;
-import org.jodah.typetools.TypeResolver;
 
 /**
  * Resolves saga configs by searching for suitable {@link SagaConfigProvider}s.
@@ -58,13 +56,7 @@ public class AutoDiscoverSagaConfigResolver<E> implements SagaConfigResolver<E> 
             log.warning("No saga config providers found");
 	while (it.hasNext()) {
             SagaConfigProvider<? extends Saga<E>, E> provider = it.next();
-            Class<?>[] typeArguments = TypeResolver.resolveRawArguments(SagaConfigProvider.class,
-                    provider.getClass());
-            Class<? extends Saga<E>> sagaClass = (Class) typeArguments[0];
-            if (TypeResolver.Unknown.class.equals(sagaClass))
-                throw new IllegalStateException("Saga type parameter missing on " +
-                        SagaConfigProvider.class.getSimpleName() + " for class " +
-                        provider.getClass().getName());
+            Class<? extends Saga<E>> sagaClass = provider.sagaClass();
             log.log(Level.INFO, "Discovered saga config provider {0} for saga {1}",
                     new Object[]{provider.getClass(), sagaClass});
             SagaConfig<? extends Saga<E>, E> config = provider.sagaConfig();

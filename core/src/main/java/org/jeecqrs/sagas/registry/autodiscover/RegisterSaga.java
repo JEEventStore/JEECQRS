@@ -31,4 +31,6 @@ import org.jeecqrs.sagas.Saga;
  */
 public interface RegisterSaga<S extends Saga<?>> {
 
+    Class<S> sagaClass();
+
 }

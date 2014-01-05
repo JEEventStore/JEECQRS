@@ -32,6 +32,12 @@ import org.jeecqrs.sagas.SagaConfig;
 public interface SagaConfigProvider<S extends Saga<E>, E> {
 
     /**
+     * Provides the saga class this provider configures.
+     * @return  the saga class
+     */
+    Class<S> sagaClass();
+
+    /**
      * Provides the saga config.
      * 
      * @return  the saga config

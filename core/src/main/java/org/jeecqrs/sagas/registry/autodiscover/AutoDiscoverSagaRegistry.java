@@ -29,7 +29,6 @@ import javax.inject.Inject;
 import org.jeecqrs.sagas.Saga;
 import org.jeecqrs.sagas.config.autodiscover.SagaConfigProvider;
 import org.jeecqrs.sagas.registry.AbstractSagaRegistry;
-import org.jodah.typetools.TypeResolver;
 
 /**
  * Automatically discovers and registers Sagas using {@link SagaConfigProvider}.
@@ -49,12 +48,7 @@ public class AutoDiscoverSagaRegistry<E> extends AbstractSagaRegistry<E> {
             log.warning("No sagas found");
 	while (it.hasNext()) {
             RegisterSaga<Saga<E>> r = it.next();
-            Class<?>[] typeArguments = TypeResolver.resolveRawArguments(RegisterSaga.class, r.getClass());
-            Class<? extends Saga<E>> sagaClass = (Class) typeArguments[0];
-            if (TypeResolver.Unknown.class.equals(sagaClass))
-                throw new IllegalStateException("Saga type parameter missing on " +
-                        RegisterSaga.class.getSimpleName() + " for class " + r.getClass().getName());
-            log.info("Discovered saga: " + sagaClass.getSimpleName());
+            Class<? extends Saga<E>> sagaClass = r.sagaClass();
             this.register(sagaClass);
 	}
     }
