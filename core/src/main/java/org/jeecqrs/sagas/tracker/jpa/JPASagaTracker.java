@@ -41,6 +41,7 @@ public class JPASagaTracker<E> extends AbstractPollingSagaTracker<E> {
 
     @Override
     protected void poll() {
+        EntityManager entityManager = entityManager();
         List<JPASagaTrackerEntry> list = entityManager
                 .createQuery("FROM " +
 			JPASagaTrackerEntry.class.getCanonicalName() +
