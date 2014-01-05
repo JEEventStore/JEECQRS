@@ -44,9 +44,6 @@ public class RegisterSagaHandlersEventBusListenerRegistry<E> extends AbstractEve
     private final Logger log =Logger.getLogger(
             RegisterSagaHandlersEventBusListenerRegistry.class.getName());
     
-    @EJB(name="listenerRegistry")
-    private EventBusListenerRegistry<E> delegateRegistry;
-
     @EJB(name="sagaRegistry")
     private SagaRegistry<E> sagaRegistry;
 
@@ -58,9 +55,6 @@ public class RegisterSagaHandlersEventBusListenerRegistry<E> extends AbstractEve
     
     @PostConstruct
     public void startup() {
-        log.fine("Registering event listeners from delegate registry");
-        for (EventBusListener<E> ebl : delegateRegistry.allListeners())
-            this.register(ebl);
         log.info("Registering event listeners for sagas");
         Set<Class<? extends Saga<E>>> sagas = sagaRegistry.allSagas();
         if (sagas.isEmpty())
