@@ -27,9 +27,7 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
-import org.jeecqrs.command.CommandHandler;
 import org.jeecqrs.command.registry.AbstractCommandHandlerRegistry;
-import org.jodah.typetools.TypeResolver;
 
 /**
  *
