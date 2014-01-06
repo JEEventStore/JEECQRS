@@ -45,13 +45,10 @@ public class SimpleAsyncCommandBus<C extends Serializable> extends AbstractSimpl
     @Resource
     private TimerService timerService;
     
-    @Resource(name = "retryInterval")
-    private long retryInterval = 100;
-
     @Override
     public void send(C command) {
         TimerConfig config = new TimerConfig(command, true);
-        timerService.createIntervalTimer(0, retryInterval, config);
+        timerService.createSingleActionTimer(0, config);
     } 
     
     @Timeout
@@ -61,9 +58,6 @@ public class SimpleAsyncCommandBus<C extends Serializable> extends AbstractSimpl
         try {
             C command = (C) timer.getInfo();
             this.callHandler(command);
-            // if we reach this line, no exception was thrown, i.e., the
-            // command was handled successfully and the timer can be cancelled
-            timer.cancel();
         } catch (Exception e) {
             log.severe("Error calling command handler: " + e.getMessage());
         }
