@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.EJB;
 import javax.persistence.EntityManager;
 import org.jeecqrs.sagas.tracker.AbstractPollingSagaTracker;
 
@@ -36,8 +37,8 @@ public class JPASagaTracker<E> extends AbstractPollingSagaTracker<E> {
 
     private static final Logger log = Logger.getLogger(JPASagaTracker.class.getCanonicalName());
 
-    // injected by deployment descriptor
-    private EntityManager entityManager;
+    @EJB(name="persistenceContextProvider")
+    private PersistenceContextProvider persistenceContextProvider;
 
     @Override
     protected void poll() {
@@ -60,7 +61,7 @@ public class JPASagaTracker<E> extends AbstractPollingSagaTracker<E> {
     }
 
     protected EntityManager entityManager() {
-        return this.entityManager;
+        return persistenceContextProvider.entityManager();
     }
 
     @Override
