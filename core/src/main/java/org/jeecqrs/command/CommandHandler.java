@@ -26,6 +26,6 @@ package org.jeecqrs.command;
  */
 public interface CommandHandler<C> {
 
-    void handleCommand(C command);
+    void handle(C command);
     
 }

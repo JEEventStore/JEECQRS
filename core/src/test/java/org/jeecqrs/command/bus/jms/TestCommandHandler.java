@@ -8,7 +8,7 @@ import org.jeecqrs.command.registry.autodiscover.AutoDiscoveredCommandHandler;
 public class TestCommandHandler implements AutoDiscoveredCommandHandler<TestCommand> {
 
     @Override
-    public void handleCommand(TestCommand command) {
+    public void handle(TestCommand command) {
         System.out.println("Received command: " + command.payload);
         try {
             Thread.sleep(500);

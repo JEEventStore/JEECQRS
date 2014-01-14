@@ -44,7 +44,7 @@ public abstract class AbstractSimpleCommandBus<C> {
         CommandHandler<C> handler = registry.commandHandlerFor(command.getClass());
         if (handler == null)
             throw new CommandHandlerNotFoundException(command.getClass());
-        handler.handleCommand(command);
+        handler.handle(command);
     }
 
 }

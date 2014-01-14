@@ -62,7 +62,7 @@ public class JMSCommandBusListener implements MessageListener {
             return;
         }
         try {
-            handler.handleCommand(command);
+            handler.handle(command);
         } catch (Exception e) {
             log.severe("Error calling command handler: " +  e.getMessage());
             mdc.setRollbackOnly();
