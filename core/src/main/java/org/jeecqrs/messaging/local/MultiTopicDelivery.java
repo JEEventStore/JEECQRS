@@ -42,7 +42,7 @@ public class MultiTopicDelivery<M> {
     private final MultiTopicSubscriber<M> subscriber;  // the subscriber that is supposed to receive the messages
     private SubscriberFailingCallback failingSubCB;    // callback for failing subscribers
     private long maxAttempts = 10;                     // max # of attepmts to deliver a message
-    private long failedAttempts = 0;                   // # of failed attempts to deliver a message
+    private volatile long failedAttempts = 0;          // # of failed attempts to deliver a message
     private final Queue<MessageEnvelope<M>> messageQueue; // queue of pending messages
     private final Lock lock;                           // lock to restrict deliver()
 
