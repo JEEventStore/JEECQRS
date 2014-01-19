@@ -24,7 +24,8 @@ package org.jeecqrs.command.bus.simple;
 import org.jeecqrs.command.CommandBus;
 
 /**
- * A command bus that calls command handlers directly, but asynchronously.
+ * A command bus that calls command handlers directly within the same transaction
+ * as the caller.
  * Deploy as stateless bean.
  */
 public class SimpleSyncCommandBus<C> extends AbstractSimpleCommandBus<C> implements CommandBus<C> {
