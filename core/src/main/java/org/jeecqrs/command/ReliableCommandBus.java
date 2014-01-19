@@ -18,24 +18,18 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-
-package org.jeecqrs.command.bus.simple;
-
-import org.jeecqrs.command.ReliableCommandBus;
+package org.jeecqrs.command;
 
 /**
- * A command bus that calls command handlers directly within the same transaction
- * as the caller.
- * Deploy as stateless bean.
- * 
- * @param <C>  the command base type
+ * A reliable commandBus guarantees that no commands are lost when the 
+ * transaction surrounding {@link #send()} commits successfully.
+ * In particular, if the command handler does not successfully handles
+ * the command (e.g, either by rolling back the transaction or by by throwing an
+ * exception), a reliable command bus must eitehr also rollback the
+ * transaction surrounding {@link #send()}, or guarantee possibly infinite
+ * retries until the command has been delivered (possibly after application
+ * restart or manual intervention).
  */
-public class SimpleSyncCommandBus<C> extends AbstractSimpleCommandBus<C>
-        implements ReliableCommandBus<C> {
-
-    @Override
-    public void send(C command) {
-        this.callHandler(command);
-    }
-
+public interface ReliableCommandBus<C> extends CommandBus<C> {
+    
 }

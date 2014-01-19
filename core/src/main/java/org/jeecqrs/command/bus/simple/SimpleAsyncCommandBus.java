@@ -35,6 +35,12 @@ import org.jeecqrs.command.CommandBus;
 
 /**
  * A command bus that calls command handlers directly, but asynchronously.
+ * If the command handler fails to handle the command, delivery is retried once.
+ * <p>
+ * Note that the command can get lost if the application server shuts
+ * down before the command was delivered, or if the command handler
+ * repeatedly fails to handle the command.
+ * <p>
  * Deploy as stateless bean.
  */
 public class SimpleAsyncCommandBus<C extends Serializable> extends AbstractSimpleCommandBus<C>
@@ -47,7 +53,7 @@ public class SimpleAsyncCommandBus<C extends Serializable> extends AbstractSimpl
     
     @Override
     public void send(C command) {
-        TimerConfig config = new TimerConfig(command, true);
+        TimerConfig config = new TimerConfig(command, false);
         timerService.createSingleActionTimer(0, config);
     } 
     
