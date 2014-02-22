@@ -60,6 +60,7 @@ public abstract class AbstractPollingSagaTracker<E> extends AbstractSerializingS
     }
 
     private void scheduleEarlyCron(long timeout) {
+        timeout = Math.min(timeout, 1); // sanity check
         TimerConfig config = new TimerConfig();
         config.setPersistent(false);
         timerService.createSingleActionTimer(timeout, config);
