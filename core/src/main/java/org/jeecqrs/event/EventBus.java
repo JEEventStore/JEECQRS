@@ -23,6 +23,14 @@ package org.jeecqrs.event;
 
 /**
  * Provides the ability to send events to interested listeners (publish-subscribe).
+ * The EventBus provides the following guarantees as long as the system is running:
+ * <ul>
+ * <li>at least once delivery, i.e., each event is published to each subscriber at least once.</li>
+ * <li>in-order-guarantee per topic, i.e., for each topic, listeners can expect events to
+ *  be delivered in the order they arrived on that particular topic.</li>
+ * </ul>
+ * Note that events may get lost when the system is crashing or restarted.
+ * The CQRS system therefore expects the event store to replay events on system startup.
  * 
  * @param <E>   the base message type
  */
