@@ -6,3 +6,4 @@
 nbactions.xml
 /target/
 /core/target/
+/infra-jpa-ejb/target/

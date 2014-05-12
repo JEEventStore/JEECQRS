@@ -12,6 +12,7 @@
 
     <modules>
         <module>core</module>
+        <module>infra-jpa-ejb</module>
     </modules>
 
     <properties>
@@ -19,6 +20,7 @@
         <maven.compiler.target>1.7</maven.compiler.target>
         <maven.compiler.source>1.7</maven.compiler.source>
         <version.compiler.plugin>2.3.1</version.compiler.plugin>
+        <version.ejb.plugin>2.3</version.ejb.plugin>
         <version.apache.commons-lang>2.6</version.apache.commons-lang>
 
         <!-- Tests -->
@@ -161,6 +163,20 @@
 
             </plugins>
         </pluginManagement>
+
+        <plugins>
+
+            <!-- Configure the maven-ejb-plugin to use EJB 3.1 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-ejb-plugin</artifactId>
+                <version>${version.ejb.plugin}</version>
+                <configuration>
+                    <ejbVersion>3.1</ejbVersion>
+                </configuration>
+            </plugin>
+
+        </plugins>
 
     </build>
 
