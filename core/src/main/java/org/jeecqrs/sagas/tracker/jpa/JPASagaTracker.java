@@ -38,7 +38,7 @@ public class JPASagaTracker<E> extends AbstractPollingSagaTracker<E> {
     private static final Logger log = Logger.getLogger(JPASagaTracker.class.getCanonicalName());
 
     @EJB(name="persistenceContextProvider")
-    private PersistenceContextProvider persistenceContextProvider;
+    private JPASagaTrackerPersistenceContextProvider persistenceContextProvider;
 
     @Override
     protected void poll() {
