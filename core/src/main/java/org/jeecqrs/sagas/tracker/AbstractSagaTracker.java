@@ -32,10 +32,8 @@ public abstract class AbstractSagaTracker<E> implements SagaTracker<E> {
 
     private final Logger log = Logger.getLogger(this.getClass().getCanonicalName());
     
-    // beware! should be an event bus that delivers to a persistence layer AND should use persistent queues
-    // to avoid lost events
     @EJB(name="eventBus")
-    private EventBus<E> eventBus;
+    private SagaTrackerEventBus<E> eventBus;
 
     /**
      * Dispatches the timed event to the event bus to make it available
