@@ -93,21 +93,25 @@ public class LocalEventBus<E> implements EventBus<E> {
     }
 
     protected void subscribe(EventBusListener<E> listener) {
-        MultiTopicSubscriber mts = subscriberFor(listener);
-        if (mts != null)
-            throw new IllegalStateException("Subscriber already subscribed: " + listener);
-        mts = createSubscriberFor(listener);
-        mtp.subscribe(mts);
-        map.put(listener, mts);
-	log.log(Level.INFO, "Now serving {0} listeners.", new Object[]{map.size()});
+        synchronized(this) {
+            MultiTopicSubscriber mts = subscriberFor(listener);
+            if (mts != null)
+                throw new IllegalStateException("Subscriber already subscribed: " + listener);
+            mts = createSubscriberFor(listener);
+            mtp.subscribe(mts);
+            map.put(listener, mts);
+        }
+        log.log(Level.INFO, "Now serving {0} listeners.", new Object[]{map.size()});
     }
 
     protected void unsubscribe(EventBusListener<E> listener) {
-        MultiTopicSubscriber mts = subscriberFor(listener);
-        if (mts == null)
-            throw new IllegalStateException("No such subscriber registered: " + listener);
-        map.remove(listener);
-        mtp.unsubscribe(mts);
+        synchronized(this) {
+            MultiTopicSubscriber mts = subscriberFor(listener);
+            if (mts == null)
+                throw new IllegalStateException("No such subscriber registered: " + listener);
+            map.remove(listener);
+            mtp.unsubscribe(mts);
+        }
     }
 
     private MultiTopicSubscriber<E> subscriberFor(EventBusListener<E> listener) {
@@ -125,7 +129,7 @@ public class LocalEventBus<E> implements EventBus<E> {
             public void canceledSubscription() {
                 log.severe("Error: Forced unsubscription of EventBusListener " +
                         listener + " / " + listener.getClass());
-                map.remove(listener);
+                unsubscribe(listener);
             }
 
             @Override
