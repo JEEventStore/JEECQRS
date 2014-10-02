@@ -89,7 +89,7 @@ public class JPASagaTrackerEntry implements Serializable {
         this.description = description;
 	this.eventType = eventType;
 	this.eventBody = eventBody;
-	this.timeout = timeout;
+	this.timeout = new Date(timeout.getTime());
     }
 
     public Long id() {
@@ -113,7 +113,7 @@ public class JPASagaTrackerEntry implements Serializable {
     }
 
     public Date timeout() {
-	return timeout;
+	return new Date(timeout.getTime());
     }
 
     // required for JPA

@@ -35,7 +35,7 @@ public class CommandLogEnvelope<C> implements Serializable {
     }
 
     public Date occuredOn() {
-        return occuredOn;
+        return new Date(occuredOn.getTime());
     }
 
     public Map<String, String> getHeaders() {
