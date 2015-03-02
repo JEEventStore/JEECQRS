@@ -27,8 +27,6 @@ import org.jeecqrs.sagas.handler.SagaService;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import org.jeecqrs.event.EventBusListener;
-import org.jeecqrs.event.EventBusListenerRegistry;
 import org.jeecqrs.event.EventInterest;
 import org.jeecqrs.event.registry.AbstractEventBusListenerRegistry;
 import org.jeecqrs.sagas.Saga;
