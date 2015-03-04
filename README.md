@@ -9,3 +9,7 @@ for JMS messaging) compliant container.
 It is recommended (but not necessary) to hide these infrastructure
 services behind suitable [Facades](http://c2.com/cgi/wiki?FacadePattern)
 in your own application.
+
+Tested containers:
+* JBoss AS 7.x
+* Wildfly 8.2 (8.1 is not supported due to bugs in WELD)
