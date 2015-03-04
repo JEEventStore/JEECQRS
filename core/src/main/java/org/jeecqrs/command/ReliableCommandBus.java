@@ -29,6 +29,8 @@ package org.jeecqrs.command;
  * transaction surrounding {@link #send()}, or guarantee possibly infinite
  * retries until the command has been delivered (possibly after application
  * restart or manual intervention).
+ * 
+ * @param <C> the command base type.
  */
 public interface ReliableCommandBus<C> extends CommandBus<C> {
     
