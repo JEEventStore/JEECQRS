@@ -18,7 +18,7 @@ public class TestCommandHandler implements AutoDiscoveredCommandHandler<TestComm
     }
 
     @Override
-    public Class<? extends TestCommand> handledCommandType() {
+    public Class<TestCommand> handledCommandType() {
         return TestCommand.class;
     }
     
