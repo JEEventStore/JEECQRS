@@ -22,9 +22,7 @@
 package org.jeecqrs.command.bus.simple;
 
 import java.util.logging.Logger;
-import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
-import org.jeecqrs.command.CommandBus;
 import org.jeecqrs.command.CommandHandler;
 import org.jeecqrs.command.CommandHandlerNotFoundException;
 import org.jeecqrs.command.CommandHandlerRegistry;
@@ -32,6 +30,8 @@ import org.jeecqrs.command.CommandHandlerRegistry;
 /**
  * Base for a command bus that calls command handlers directly.
  * Can be deployed as stateless bean.
+ * 
+ * @param <C> the command base type
  */
 public abstract class AbstractSimpleCommandBus<C> {
 
