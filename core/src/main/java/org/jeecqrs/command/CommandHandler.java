@@ -23,6 +23,7 @@ package org.jeecqrs.command;
 
 /**
  *
+ * @param <C> the actual command type handled by this handler
  */
 public interface CommandHandler<C> {
 
