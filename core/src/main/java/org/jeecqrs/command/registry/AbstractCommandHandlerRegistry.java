@@ -32,28 +32,34 @@ import javax.ejb.LockType;
 import org.jeecqrs.command.CommandHandlerRegistry;
 import org.jeecqrs.command.CommandHandler;
 
+/**
+ * Bundles functionality common to command handler registries.
+ * @param <C> the command base type of commands this registry can handle.
+ */
 public abstract class AbstractCommandHandlerRegistry<C> implements CommandHandlerRegistry<C> {
 
     private final Logger log = Logger.getLogger(this.getClass().getName());
 
-    private final Map<Class<? extends C>, CommandHandler<C>> handlers = new HashMap<>();
+    private final Map<Class<? extends C>, CommandHandler<? extends C>> handlers = new HashMap<>();
 
     @Override
     @Lock(LockType.READ)
-    public CommandHandler<C> commandHandlerFor(Class<? extends C> clazz) {
+    public <H extends C> CommandHandler<H> commandHandlerFor(Class<H> clazz) {
         return lookup(clazz);
     }
 
     @Override
     @Lock(LockType.READ)
-    public Set<CommandHandler<C>> allCommandHandlers() {
+    public Set<CommandHandler<? extends C>> allCommandHandlers() {
         return new HashSet<>(handlers.values());
     }
 
     /**
-     * Must only be called from {@code LockType.WRITE} protected methods.
+     * Register a new command handler for the given type.
+     * Attention: Must only be called from {@code LockType.WRITE} protected methods.
+     * @param <H> the handled command type to be registered.
      */
-    protected void register(Class<? extends C> commandType, CommandHandler<C> handler) {
+    protected <H extends C> void register(Class<H> commandType, CommandHandler<H> handler) {
         log.log(Level.INFO, "Registering CommandHandler for class {0}: {1}",
                 new Object[]{ commandType.getCanonicalName(), handler });
         if (lookup(commandType) != null)
@@ -63,10 +69,15 @@ public abstract class AbstractCommandHandlerRegistry<C> implements CommandHandle
     }
 
     /**
+     * Looks up the command handler for the given type in the internal store.
      * May be called from {@code LockType.READ} protected methods.
+     * @param <H> the command type to be looked up
+     * @param clazz the class of the command type to be looked up
+     * @return the command type
      */
-    protected CommandHandler<C> lookup(Class<? extends C> clazz) {
-        return handlers.get(clazz);
+    @SuppressWarnings("unchecked") // cast is safe
+    protected <H extends C> CommandHandler<H> lookup(Class<H> clazz) {
+        return (CommandHandler<H>) handlers.get(clazz);
     }
 
 }

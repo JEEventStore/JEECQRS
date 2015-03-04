@@ -30,32 +30,35 @@ import javax.inject.Inject;
 import org.jeecqrs.command.registry.AbstractCommandHandlerRegistry;
 
 /**
- *
+ * Automatically discovers command handlers via CDI injection.
+ * @param <C> the command base type to look up.
  */
 public class AutoDiscoverCommandHandlerRegistry<C> extends AbstractCommandHandlerRegistry<C> {
 
     private Logger log = Logger.getLogger(AutoDiscoverCommandHandlerRegistry.class.getName());
 
     @Inject
-    private Instance<AutoDiscoveredCommandHandler<C>> handlerInstances;
+    private Instance<AutoDiscoveredCommandHandler<? extends C>> handlerInstances;
 
     @PostConstruct
     public void startup() {
-        log.info("Scanning command handlers");
-	Iterator<AutoDiscoveredCommandHandler<C>> it = select(handlerInstances);
+        log.info("Scanning command handlers...");
+	Iterator<AutoDiscoveredCommandHandler<? extends C>> it = select(handlerInstances);
         if (!it.hasNext())
-            log.warning("No command handlers found");
-	while (it.hasNext()) {
-            AutoDiscoveredCommandHandler<C> h = it.next();
-            Class<? extends C> commandType = h.handledCommandType();
-            log.log(Level.FINE, "Discovered command handler {0} for command {1}",
-                    new Object[]{h.getClass(), commandType.getSimpleName()});
-            this.register(commandType, h);
-	}
+            log.warning("No command handlers found.");
+	while (it.hasNext())
+            this.register(it.next());
     }
 
-    protected Iterator<AutoDiscoveredCommandHandler<C>> select(
-            Instance<AutoDiscoveredCommandHandler<C>> instances) {
+    protected <H extends C> void register(AutoDiscoveredCommandHandler<H> handler) {
+        Class<H> commandType = handler.handledCommandType();
+        log.log(Level.FINE, "Discovered command handler {0} for command {1}",
+                new Object[]{handler.getClass(), commandType.getSimpleName()});
+        this.register(commandType, handler);
+    }
+
+    protected Iterator<AutoDiscoveredCommandHandler<? extends C>> select(
+            Instance<AutoDiscoveredCommandHandler<? extends C>> instances) {
         return instances.iterator();
     } 
     

@@ -25,21 +25,23 @@ import java.util.Set;
 
 /**
  *
+ * @param <C> the command base type.
  */
 public interface CommandHandlerRegistry<C> {
     
     /**
-     * 
+     * Returns the command handler for the given command type.
+     * @param <H> the command type to be handled
      * @param clazz
-     * @return 
+     * @return the command handler for this type
      * @throws CommandHandlerNotFoundException  if no handler can be found
      */
-    CommandHandler<C> commandHandlerFor(Class<? extends C> clazz);
+    <H extends C> CommandHandler<H> commandHandlerFor(Class<H> clazz);
 
     /**
      * Returns set of all registered command handlers.
      * @return 
      */
-    Set<CommandHandler<C>> allCommandHandlers();
+    Set<CommandHandler<? extends C>> allCommandHandlers();
     
 }
