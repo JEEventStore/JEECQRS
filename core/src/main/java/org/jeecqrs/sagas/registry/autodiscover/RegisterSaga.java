@@ -29,7 +29,7 @@ import org.jeecqrs.sagas.Saga;
  * 
  * @param <S>  the saga type to register
  */
-public interface RegisterSaga<S extends Saga<?>> {
+public interface RegisterSaga<S extends Saga<E>, E> {
 
     Class<S> sagaClass();
 

@@ -27,7 +27,8 @@ import org.jeecqrs.sagas.SagaConfig;
 /**
  * Provides the ability to provide saga configs.
  * 
- * @param <S>  the saga type this provides configs for
+ * @param <S>  the actual saga type this provides configs for
+ * @param <E>  the event base type
  */
 public interface SagaConfigProvider<S extends Saga<E>, E> {
 
@@ -38,9 +39,9 @@ public interface SagaConfigProvider<S extends Saga<E>, E> {
     Class<S> sagaClass();
 
     /**
-     * Provides the saga config.
+     * Provides the saga configuration.
      * 
-     * @return  the saga config
+     * @return  the saga configuration
      */
     SagaConfig<S, E> sagaConfig();
     

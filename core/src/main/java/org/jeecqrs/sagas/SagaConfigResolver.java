@@ -23,9 +23,16 @@ package org.jeecqrs.sagas;
 
 /**
  * Specifies the ability to resolve configuration properties for sagas.
+ * @param <E> the event base type
  */
 public interface SagaConfigResolver<E> {
 
-    SagaConfig<? extends Saga<E>, E> configure(Class<? extends Saga<E>> sagaType);
+    /**
+     * Returns the SagaConfig for saga of the given type.
+     * @param <S> the actual saga type.
+     * @param sagaType the saga type class
+     * @return the saga config
+     */
+    <S extends Saga<E>> SagaConfig<S, E> configure(Class<S> sagaType);
 
 }

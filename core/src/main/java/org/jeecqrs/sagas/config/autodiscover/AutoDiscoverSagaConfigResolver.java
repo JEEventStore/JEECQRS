@@ -38,6 +38,8 @@ import org.jeecqrs.sagas.SagaConfigResolver;
 /**
  * Resolves saga configs by searching for suitable {@link SagaConfigProvider}s.
  * Deploy as Singleton bean.
+ * 
+ * @param <E> the event base type
  */
 public class AutoDiscoverSagaConfigResolver<E> implements SagaConfigResolver<E> {
 
@@ -45,47 +47,63 @@ public class AutoDiscoverSagaConfigResolver<E> implements SagaConfigResolver<E> 
 
     private final Map<Class<? extends Saga<E>>, SagaConfig<? extends Saga<E>, E>> registry = new HashMap<>();
 
+    // injection on Wildfly requires wildcards here, newer WELD versions are very strict
     @Inject
-    private Instance<SagaConfigProvider<? extends Saga<E>, E>> providers;
+    private Instance<SagaConfigProvider<? extends Saga<?>, ?>> providers;
 
     @PostConstruct
     public void startup() {
         log.info("Scanning saga config providers...");
-	Iterator<SagaConfigProvider<? extends Saga<E>, E>> it = select(providers);
+	Iterator<SagaConfigProvider<?, ?>> it = select(providers);
         if (!it.hasNext())
-            log.warning("No saga config providers found");
+            log.warning("No saga config providers found.");
 	while (it.hasNext()) {
-            SagaConfigProvider<? extends Saga<E>, E> provider = it.next();
-            Class<? extends Saga<E>> sagaClass = provider.sagaClass();
-            log.log(Level.INFO, "Discovered saga config provider {0} for saga {1}",
-                    new Object[]{provider.getClass(), sagaClass});
-            SagaConfig<? extends Saga<E>, E> config = provider.sagaConfig();
-            if (config == null)
-                throw new IllegalStateException("Provider must not return null SagaConfig");
-            register(sagaClass, config);
-	}
+            this.registerUntyped(it.next());
+        }
     }
 
-    protected Iterator<SagaConfigProvider<? extends Saga<E>, E>> select(
-            Instance<SagaConfigProvider<? extends Saga<E>, E>> providers) {
+    protected Iterator<SagaConfigProvider<? extends Saga<?>, ?>> select(
+            Instance<SagaConfigProvider<? extends Saga<?>, ?>> providers) {
         return providers.iterator();
+    }
+
+    // required to convert the untyped versions to the typed versions
+    private void registerUntyped(SagaConfigProvider<? extends Saga<?>, ?> provider) {
+        this.register(fixType(provider));
+    }
+
+    private SagaConfigProvider<? extends Saga<E>, E> fixType(
+            SagaConfigProvider<? extends Saga<?>, ?> in) {
+        return (SagaConfigProvider<? extends Saga<E>, E>) in;
+    }
+
+    protected <S extends Saga<E>> void register(SagaConfigProvider<S, E> provider) {
+        Class<S> sagaClass = provider.sagaClass();
+        log.log(Level.INFO, "Discovered saga config provider {0} for saga {1}",
+                    new Object[]{provider.getClass(), sagaClass});
+        SagaConfig<S, E> config = provider.sagaConfig();
+        if (config == null)
+            throw new IllegalStateException("Provider must not return null SagaConfig");
+        AutoDiscoverSagaConfigResolver.this.register(sagaClass, config);
     }
 
     /**
      * Registers the given SagaConfig for the given Saga class.
      * Must only be called from LockType.WRITE protected methods.
      * 
+     * @param <S>     the saga type
      * @param clazz   the saga class
      * @param config  the saga config
      */
-    protected void register(Class<? extends Saga<E>> clazz, SagaConfig<? extends Saga<E>, E> config) {
+    protected <S extends Saga<E>> void register(Class<S> clazz, SagaConfig<S, E> config) {
         registry.put(clazz, config);
     }
 
     @Override
     @Lock(LockType.READ)
-    public SagaConfig<? extends Saga<E>, E> configure(Class<? extends Saga<E>> sagaType) {
-        return registry.get(sagaType);
+    @SuppressWarnings("unchecked") // cast is safe
+    public <S extends Saga<E>> SagaConfig<S, E> configure(Class<S> sagaType) {
+        return (SagaConfig<S, E>) registry.get(sagaType);
     }
-    
+
 }

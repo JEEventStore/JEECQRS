@@ -58,9 +58,10 @@ public interface Saga<E> {
     /**
      * Handles an event.
      * 
+     * @param <T> the type of the event to handle
      * @param event  the event to handle
      */
-    void handle(E event);
+    <T extends E> void handle(T event);
 
     /**
      * Specifies whether the current saga is completed.

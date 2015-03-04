@@ -31,29 +31,43 @@ import org.jeecqrs.sagas.config.autodiscover.SagaConfigProvider;
 import org.jeecqrs.sagas.registry.AbstractSagaRegistry;
 
 /**
- * Automatically discovers and registers Sagas using {@link SagaConfigProvider}.
+ * Automatically discovers and registers Sagas using {@link RegisterSaga}.
  */
 public class AutoDiscoverSagaRegistry<E> extends AbstractSagaRegistry<E> {
 
     private final Logger log = Logger.getLogger(AutoDiscoverSagaRegistry.class.getName());
 
     @Inject
-    private Instance<RegisterSaga<Saga<E>>> instances;
+    private Instance<RegisterSaga<? extends Saga<?>, ?>> instances;
 
     @PostConstruct
     public void startup() {
         log.info("Scanning sagas...");
-	Iterator<RegisterSaga<Saga<E>>> it = select(instances);
+	Iterator<RegisterSaga<? extends Saga<?>, ?>> it = select(instances);
         if (!it.hasNext())
-            log.warning("No sagas found");
+            log.warning("No sagas found.");
 	while (it.hasNext()) {
-            RegisterSaga<Saga<E>> r = it.next();
-            Class<? extends Saga<E>> sagaClass = r.sagaClass();
-            this.register(sagaClass);
-	}
+            this.registerUntyped(it.next());
+        }
     }
 
-    protected Iterator<RegisterSaga<Saga<E>>> select(Instance<RegisterSaga<Saga<E>>> instances) {
+    // required to convert the untyped versions to the typed versions
+    private void registerUntyped(RegisterSaga<? extends Saga<?>, ?> register) {
+        this.register(fixType(register));
+    }
+
+    private RegisterSaga<? extends Saga<E>, E> fixType(
+            RegisterSaga<? extends Saga<?>, ?> in) {
+        return (RegisterSaga<? extends Saga<E>, E>) in;
+    }
+
+    protected <S extends Saga<E>> void register(RegisterSaga<S, E> register) {
+        Class<S> sagaClass = register.sagaClass();
+        this.register(sagaClass);
+    }
+
+    protected Iterator<RegisterSaga<? extends Saga<?>, ?>> select(
+            Instance<RegisterSaga<? extends Saga<?>, ?>> instances) {
         return instances.iterator();
     }
     
