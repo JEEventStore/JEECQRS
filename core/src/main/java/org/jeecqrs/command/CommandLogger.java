@@ -25,6 +25,7 @@ import java.util.Map;
 
 /**
  *
+ * @param <C> the command base type.
  */
 public interface CommandLogger<C> {
 
