@@ -37,22 +37,26 @@ public class AutoDiscoverEventBusListenerRegistry<E> extends AbstractEventBusLis
     private final Logger log = Logger.getLogger(AutoDiscoverEventBusListenerRegistry.class.getName());
 
     @Inject
-    private Instance<EventBusListener<E>> handlerInstances;
+    private Instance<EventBusListener<?>> handlerInstances;
 
     @PostConstruct
     public void startup() {
         log.info("Scanning event bus listeners");
-	Iterator<EventBusListener<E>> it = select(handlerInstances);
+	Iterator<EventBusListener<?>> it = select(handlerInstances);
         if (!it.hasNext())
             log.warning("No event bus listeners found");
 	while (it.hasNext()) {
-            EventBusListener<E> h = it.next();
-            log.fine("Discovered event bus listener: " + h);
-            this.register(h);
+            EventBusListener<?> h = it.next();
+            log.info("Discovered event bus listener: " + h);
+            this.register(typeConvert(h));
 	}
     }
 
-    protected Iterator<EventBusListener<E>> select(Instance<EventBusListener<E>> instances) {
+    private EventBusListener<E> typeConvert(EventBusListener<?> listener) {
+        return (EventBusListener<E>) listener;
+    }
+
+    protected Iterator<EventBusListener<?>> select(Instance<EventBusListener<?>> instances) {
         return instances.iterator();
     }
     

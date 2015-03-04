@@ -59,7 +59,7 @@ public class LocalEventBus<E> implements EventBus<E> {
     private Class<? extends TopicGenerationStrategy> topicGeneratorClass = DefaultTopicGenerationStrategy.class;
     private TopicGenerationStrategy<E> topicGenerator;
 
-    private Map<EventBusListener, MultiTopicSubscriber<E>> map = new HashMap<>();
+    private Map<EventBusListener<E>, MultiTopicSubscriber<E>> map = new HashMap<>();
 
     @PostConstruct
     public void init() {
@@ -75,7 +75,7 @@ public class LocalEventBus<E> implements EventBus<E> {
 
     @Override
     @Lock(LockType.READ)
-    public void dispatch(E event) {
+    public <T extends E> void dispatch(T event) {
 	log.log(Level.FINER, "Dispatching event: {0}", event);
         Class<? extends E> eventClass = (Class<? extends E>) event.getClass();
         mtp.publish(topicGenerator.topicFor(eventClass), event);
@@ -83,9 +83,13 @@ public class LocalEventBus<E> implements EventBus<E> {
     }
 
     protected void subscribeListeners() {
+        log.info("Scanning for EventBus Listener registries...");
         Iterator<EventBusListenerRegistry<E>> it = listenerRegistries.iterator();
+        if (!it.hasNext())
+            log.warning("No EventBus Listener registries found.");
         while (it.hasNext()) {
             EventBusListenerRegistry<E> listenerRegistry = it.next();
+            log.info("Registering listeners provided by registry " + listenerRegistry);
             Set<EventBusListener<E>> listeners = listenerRegistry.allListeners();
             for (EventBusListener<E> l : listeners)
                 subscribe(l);
@@ -94,7 +98,7 @@ public class LocalEventBus<E> implements EventBus<E> {
 
     protected void subscribe(EventBusListener<E> listener) {
         synchronized(this) {
-            MultiTopicSubscriber mts = subscriberFor(listener);
+            MultiTopicSubscriber<E> mts = subscriberFor(listener);
             if (mts != null)
                 throw new IllegalStateException("Subscriber already subscribed: " + listener);
             mts = createSubscriberFor(listener);
@@ -114,8 +118,8 @@ public class LocalEventBus<E> implements EventBus<E> {
         }
     }
 
-    private MultiTopicSubscriber<E> subscriberFor(EventBusListener<E> listener) {
-        return map.get(listener);
+    private <T extends E> MultiTopicSubscriber<T> subscriberFor(EventBusListener<E> listener) {
+        return (MultiTopicSubscriber<T>) map.get(listener);
     }
 
     protected MultiTopicSubscriber<E> createSubscriberFor(final EventBusListener<E> listener) {

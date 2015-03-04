@@ -39,8 +39,9 @@ public interface EventBus<E> {
     /**
      * Dispatches and event on the event bus.
      * 
+     * @param <T>       the type of the event to dispatch
      * @param event     the event to dispatch
      */
-    void dispatch(E event);
+    <T extends E> void dispatch(T event);
     
 }
