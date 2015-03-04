@@ -23,6 +23,7 @@ package org.jeecqrs.command;
 
 /**
  *
+ * @param <C> the command base type.
  */
 public interface CommandBus<C> {
 
