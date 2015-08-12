@@ -13,3 +13,4 @@ in your own application.
 Tested containers:
 * JBoss AS 7.x
 * Wildfly 8.2 (8.1 is not supported due to bugs in WELD)
+* Wildfly 9.0 (8.1 is not supported due to bugs in WELD)
