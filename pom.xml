@@ -13,6 +13,7 @@
     <modules>
         <module>core</module>
         <module>infra-jpa-ejb</module>
+        <module>infra-jms</module>
     </modules>
 
     <properties>
