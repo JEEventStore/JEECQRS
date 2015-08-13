@@ -54,7 +54,7 @@ public class AutoDiscoverSagaConfigResolver<E> implements SagaConfigResolver<E> 
     @PostConstruct
     public void startup() {
         log.info("Scanning saga config providers...");
-	Iterator<SagaConfigProvider<?, ?>> it = select(providers);
+	Iterator<SagaConfigProvider<? extends Saga<?>, ?>> it = select(providers);
         if (!it.hasNext())
             log.warning("No saga config providers found.");
 	while (it.hasNext()) {
