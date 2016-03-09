@@ -25,6 +25,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.ejb.Timeout;
+import javax.ejb.Timer;
+import javax.ejb.TimerConfig;
+import javax.ejb.TimerService;
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
 import javax.transaction.NotSupportedException;
@@ -42,11 +46,19 @@ import javax.transaction.UserTransaction;
  */
 public abstract class AbstractApplicationStartup {
 
+    private final static Logger log = Logger.getLogger(AbstractApplicationStartup.class.getSimpleName());
+
     @Resource(name="transactionTimeout")
     private int transactionTimeout = 84000;
 
+    @Resource(name="startupDelay")
+    private int startupDelay = 5000;
+
     @Resource
     private UserTransaction userTransaction;
+
+    @Resource
+    private TimerService timerService;
 
     @PostConstruct
     public void startup() {
@@ -61,6 +73,27 @@ public abstract class AbstractApplicationStartup {
             wireUpCommandHandlers();
             wireUpDispatchScheduler();
             wireUpSagaTracker();
+            scheduleStartup();
+            userTransaction.commit();
+        } catch (NotSupportedException | SystemException | HeuristicMixedException |
+                HeuristicRollbackException | IllegalStateException | RollbackException |
+                SecurityException ex) {
+            // all of these are hard errors that prevent application startup
+            throw new RuntimeException(ex);
+        }
+    }
+
+    private void scheduleStartup() {
+        TimerConfig config = new TimerConfig();
+        config.setPersistent(false);
+        timerService.createSingleActionTimer(startupDelay, config);
+    }
+
+    @Timeout
+    public void startup(Timer timer) {
+        try {
+            userTransaction.begin();
+            log.log(Level.INFO, "Starting application...");
             replayEvents();
             startDispatchScheduler();
             startSagaTracker();
@@ -68,7 +101,7 @@ public abstract class AbstractApplicationStartup {
         } catch (NotSupportedException | SystemException | HeuristicMixedException |
                 HeuristicRollbackException | IllegalStateException | RollbackException |
                 SecurityException ex) {
-            // all of these are hard errors that prevent application startup
+            log.severe(ex.getMessage());
             throw new RuntimeException(ex);
         }
     }
