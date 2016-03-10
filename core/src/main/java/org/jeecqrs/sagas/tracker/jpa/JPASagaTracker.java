@@ -44,7 +44,7 @@ public class JPASagaTracker<E> extends AbstractPollingSagaTracker<E> {
     protected void poll() {
         EntityManager entityManager = entityManager();
         List<JPASagaTrackerEntry> list = entityManager
-                .createQuery("FROM " +
+                .createQuery("SELECT e FROM " +
 			JPASagaTrackerEntry.class.getCanonicalName() +
 			" e WHERE e.timeout <= :timeout",
 			JPASagaTrackerEntry.class)
