@@ -83,13 +83,17 @@ public class LocalMultiTopicPublisher<M> implements MultiTopicPublisher<M> {
     private final Map<String, Set<MultiTopicDelivery>> subscriptionsByTopic;
     private final java.util.concurrent.locks.Lock subscriptionsByTopicLock = new ReentrantLock();
 
+    private final Map<String, Timer> timerByTopic;
+    private final java.util.concurrent.locks.Lock timerByTopicLock = new ReentrantLock();
+
     private final Map<MultiTopicSubscriber, MultiTopicDelivery> subscriptionsBySubscriber;
     private final java.util.concurrent.locks.Lock subscriptionsBySubscriberLock = new ReentrantLock();
 
 
     public LocalMultiTopicPublisher() {
-        this.subscriptionsByTopic = new ConcurrentHashMap<>();
-        this.subscriptionsBySubscriber = new ConcurrentHashMap<>();
+	this.subscriptionsByTopic = new ConcurrentHashMap<>();
+	this.subscriptionsBySubscriber = new ConcurrentHashMap<>();
+	this.timerByTopic = new ConcurrentHashMap<>();
     }
 
     /**
@@ -126,10 +130,17 @@ public class LocalMultiTopicPublisher<M> implements MultiTopicPublisher<M> {
      * @param topic    the topic for which delivery is scheduled
      */
     private void scheduleDelivery(long timeout, String topic) {
-        TimerConfig config = new TimerConfig();
-        config.setPersistent(false);
-        config.setInfo(topic);
-        timerService.createSingleActionTimer(timeout, config);
+	this.timerByTopicLock.lock();
+	try {
+	    if (this.timerByTopic.get(topic) != null) return;
+	    TimerConfig config = new TimerConfig();
+	    config.setPersistent(false);
+	    config.setInfo(topic);
+	    Timer timer = timerService.createSingleActionTimer(timeout, config);
+	    this.timerByTopic.put(topic, timer);
+	} finally {
+	    timerByTopicLock.unlock();
+	}
     }
 
     /**
@@ -168,23 +179,31 @@ public class LocalMultiTopicPublisher<M> implements MultiTopicPublisher<M> {
     @Lock(LockType.READ) // allow parallel threads
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void deliver(Timer timer) {
-        String topic = (String) timer.getInfo();
-        log.log(Level.FINER,
-                "Delivery started for topic ''{0}'' in thread #{1}",
-                new Object[]{topic, Thread.currentThread().getId()});
-        Collection<MultiTopicDelivery> subs = subscriptionsByTopic.get(topic);
-        boolean pending = false;
-        for (MultiTopicDelivery s : subs) {
-            s.deliver();
-            if (s.hasPending())
-                pending = true;
-        }
-        if (pending) {
-            log.log(Level.FINE, "Delivery finished, but pending jobs, reschedule delivery.");
-            scheduleDelivery(retryInterval, topic);
-        } else {
-            log.log(Level.FINE, "All messages delivered.");
-        }
+	String topic = (String) timer.getInfo();
+	// first enable new scheduling by releasing the topic
+	this.timerByTopicLock.lock();
+	try {
+	    this.timerByTopic.remove(topic);
+	} finally {
+	    timerByTopicLock.unlock();
+	}
+
+	log.log(Level.FINER,
+	    "Delivery started for topic ''{0}'' in thread #{1}",
+	    new Object[]{topic, Thread.currentThread().getId()});
+	Collection<MultiTopicDelivery> subs = subscriptionsByTopic.get(topic);
+	boolean pending;
+	do {
+	    pending = false;
+	    for (MultiTopicDelivery s : subs) {
+		s.deliver();
+		if (s.hasPending())
+		    pending = true;
+	    }
+	} while (pending);
+	log.log(Level.FINE, "All messages delivered.");
+	// no need to reschedule, since after the above release of the topic Timer,
+	// any publish() that was called after our release scheduled a new timer anyways.
     }
 
     /**
