@@ -8,3 +8,7 @@ nbactions.xml
 /core/target/
 /infra-jpa-ejb/target/
 /infra-jms/target/
+
+# IntelliJ
+.idea/
+*.iml
