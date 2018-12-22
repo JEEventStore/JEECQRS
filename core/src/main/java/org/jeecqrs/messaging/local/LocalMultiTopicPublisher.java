@@ -23,6 +23,9 @@ package org.jeecqrs.messaging.local;
 
 import org.jeecqrs.messaging.MultiTopicPublisher;
 import org.jeecqrs.messaging.MultiTopicSubscriber;
+
+import javax.annotation.Resource;
+import javax.ejb.*;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -31,19 +34,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
-import javax.ejb.ConcurrencyManagement;
-import javax.ejb.ConcurrencyManagementType;
-import javax.ejb.EJBException;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Timeout;
-import javax.ejb.Timer;
-import javax.ejb.TimerConfig;
-import javax.ejb.TimerService;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 
 /**
  * An in-memory, transaction aware publisher with at-least-once delivery
@@ -51,7 +41,7 @@ import javax.ejb.TransactionAttributeType;
  * <p>
  * The global order of messages per subsequent call of {@link #publish} 
  * within a single thread is guaranteed, but the order of messages of
- * parallel calls to {@link publish} from multiple threads is unexpected, even
+ * parallel calls to {@code publish} from multiple threads is unexpected, even
  * if they arrive in the same topic. 
  * <p>
  * When a subscriber is failing, the delivery is retried a finite number of
@@ -172,7 +162,7 @@ public class LocalMultiTopicPublisher<M> implements MultiTopicPublisher<M> {
      * a view projection with an in-memory data store), or support transaction
      * creation by the usual JEE means (e.g. {@code TransactionAttributeType.REQUIRED}).
      * <p>
-     * @see MultiTopicPublisherImplTest#test_delivery_transaction_independence
+     * see MultiTopicPublisherImplTest#test_delivery_transaction_independence
      * @param timer  the EJB timer object
      */
     @Timeout

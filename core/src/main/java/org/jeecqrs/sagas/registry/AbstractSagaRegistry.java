@@ -21,13 +21,14 @@
 
 package org.jeecqrs.sagas.registry;
 
+import org.jeecqrs.sagas.Saga;
+import org.jeecqrs.sagas.SagaRegistry;
+
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import org.jeecqrs.sagas.Saga;
-import org.jeecqrs.sagas.SagaRegistry;
 
 public abstract class AbstractSagaRegistry<E> implements SagaRegistry<E> {
 
@@ -43,6 +44,7 @@ public abstract class AbstractSagaRegistry<E> implements SagaRegistry<E> {
 
     /**
      * Must only be called from {@code LockType.WRITE} protected methods.
+     * @param saga the saga to register
      */
     protected void register(Class<? extends Saga<E>> saga) {
         sagas.add(saga);

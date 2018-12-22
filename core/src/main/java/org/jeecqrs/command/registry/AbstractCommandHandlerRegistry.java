@@ -21,16 +21,17 @@
 
 package org.jeecqrs.command.registry;
 
+import org.jeecqrs.command.CommandHandler;
+import org.jeecqrs.command.CommandHandlerRegistry;
+
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import org.jeecqrs.command.CommandHandlerRegistry;
-import org.jeecqrs.command.CommandHandler;
 
 /**
  * Bundles functionality common to command handler registries.
@@ -58,6 +59,8 @@ public abstract class AbstractCommandHandlerRegistry<C> implements CommandHandle
      * Register a new command handler for the given type.
      * Attention: Must only be called from {@code LockType.WRITE} protected methods.
      * @param <H> the handled command type to be registered.
+     * @param commandType the type of the command
+     * @param handler the command handler
      */
     protected <H extends C> void register(Class<H> commandType, CommandHandler<H> handler) {
         log.log(Level.INFO, "Registering CommandHandler for class {0}: {1}",

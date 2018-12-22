@@ -21,26 +21,21 @@
 
 package org.jeecqrs.startup;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.Timeout;
 import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
-import javax.transaction.UserTransaction;
+import javax.transaction.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Orchestrates the initialization of the various infrastructure services.
  * Deploy as @Startup @Singleton EJB.
  * <p>
- * Contrary to the other services, the interface of {@link AbstractApplicationStartup}
+ * Contrary to the other services, the interface of {@code AbstractApplicationStartup}
  * does not contain the notion of a "bucket", since it is meant as a per-module
  * initialization.
  */
@@ -107,17 +102,17 @@ public abstract class AbstractApplicationStartup {
     }
 
     /**
-     * Registers event handlers at the {@link EventDispatcher}.
+     * Registers event handlers at the {@code EventDispatcher}.
      */
     protected abstract void wireUpEventListeners();
 
     /**
-     * Registers command handlers at the {@link CommandBus}.
+     * Registers command handlers at the {@code CommandBus}.
      */
     protected abstract void wireUpCommandHandlers();
 
     /**
-     * Sets up the bridge between the {@link EventDispatcher} and the
+     * Sets up the bridge between the {@code EventDispatcher} and the
      * persistence layer, such that newly persisted events are continuously
      * published to the dispatcher.
      * The preferred way is to hook into the event persistence receive
@@ -130,7 +125,7 @@ public abstract class AbstractApplicationStartup {
     protected abstract void wireUpDispatchScheduler();
 
     /**
-     * Sets up the {@link SagaTracker} to handle timed events in sagas.
+     * Sets up the {@code SagaTracker} to handle timed events in sagas.
      */
     protected abstract void wireUpSagaTracker();
 
@@ -147,7 +142,7 @@ public abstract class AbstractApplicationStartup {
     protected abstract void startDispatchScheduler();
 
     /**
-     * Starts the {@link SagaTracker}, if required (asynchronous
+     * Starts the {@code SagaTracker}, if required (asynchronous
      * implementations may not need this).
      */
     protected abstract void startSagaTracker();

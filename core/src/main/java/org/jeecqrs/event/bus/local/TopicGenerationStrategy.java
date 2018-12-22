@@ -21,10 +21,8 @@
 
 package org.jeecqrs.event.bus.local;
 
-import org.jeecqrs.messaging.MultiTopicPublisher;
-
 /**
- * Provides the ability to generate a {@link MultiTopicPublisher> topic
+ * Provides the ability to generate a {@code MultiTopicPublisher} topic
  * for a given event class.
  * 
  * @param <E>  the base event type

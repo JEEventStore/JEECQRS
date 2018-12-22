@@ -24,7 +24,7 @@ package org.jeecqrs.sagas;
 /**
  * Provides the ability to identify the matching saga for a given event.
  * 
- * @param <E>
+ * @param <E> the event type
  */
 public interface SagaIdentificationStrategy<S extends Saga<E>, E> {
 

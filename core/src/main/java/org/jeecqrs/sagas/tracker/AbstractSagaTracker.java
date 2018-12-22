@@ -21,11 +21,12 @@
 
 package org.jeecqrs.sagas.tracker;
 
+import org.jeecqrs.sagas.SagaTracker;
+
+import javax.ejb.EJB;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Logger;
-import javax.ejb.EJB;
-import org.jeecqrs.sagas.SagaTracker;
 
 public abstract class AbstractSagaTracker<E> implements SagaTracker<E> {
 
@@ -38,7 +39,7 @@ public abstract class AbstractSagaTracker<E> implements SagaTracker<E> {
      * Dispatches the timed event to the event bus to make it available
      * to the persistence store.
      * 
-     * @param event 
+     * @param event the event to be dispatched
      */
     protected void dispatch(E event) {
         eventBus.dispatch(event);

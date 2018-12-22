@@ -32,8 +32,8 @@ public interface SagaTrackerEventSerializer<E> {
 
     /**
      * Serializes into a list of events to allow for event upcasting.
-     * @param body
-     * @return 
+     * @param body the string json body
+     * @return the list of events
      */
     List<? extends E> deserialize(String body);
     

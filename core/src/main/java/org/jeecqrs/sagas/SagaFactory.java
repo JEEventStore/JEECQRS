@@ -30,8 +30,8 @@ public interface SagaFactory<S extends Saga<?>> {
 
     /**
      * Creates a new instance of a saga with the given id.
-     * @param sagaId
-     * @return 
+     * @param sagaId the id of the saga
+     * @return an instance of the saga
      */
     S createSaga(String sagaId);
 
