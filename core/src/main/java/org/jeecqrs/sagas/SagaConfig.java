@@ -32,7 +32,7 @@ public interface SagaConfig<S extends Saga<E>, E> extends ExpressEventInterest<E
 
     /**
      * Specifies a factory to create new instances of the saga.
-     * @return 
+     * @return the saga factory
      */
     SagaFactory<S> sagaFactory();
     

@@ -32,7 +32,7 @@ public interface CommandHandlerRegistry<C> {
     /**
      * Returns the command handler for the given command type.
      * @param <H> the command type to be handled
-     * @param clazz
+     * @param clazz the command class
      * @return the command handler for this type
      * @throws CommandHandlerNotFoundException  if no handler can be found
      */
@@ -40,7 +40,7 @@ public interface CommandHandlerRegistry<C> {
 
     /**
      * Returns set of all registered command handlers.
-     * @return 
+     * @return  the set
      */
     Set<CommandHandler<? extends C>> allCommandHandlers();
     

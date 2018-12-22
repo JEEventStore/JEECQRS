@@ -22,11 +22,11 @@ package org.jeecqrs.command;
 
 /**
  * A reliable commandBus guarantees that no commands are lost when the 
- * transaction surrounding {@link #send()} commits successfully.
+ * transaction surrounding {@code #send()} commits successfully.
  * In particular, if the command handler does not successfully handles
  * the command (e.g, either by rolling back the transaction or by by throwing an
  * exception), a reliable command bus must eitehr also rollback the
- * transaction surrounding {@link #send()}, or guarantee possibly infinite
+ * transaction surrounding {@code #send()}, or guarantee possibly infinite
  * retries until the command has been delivered (possibly after application
  * restart or manual intervention).
  * 

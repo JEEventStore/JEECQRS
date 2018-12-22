@@ -21,18 +21,15 @@
 
 package org.jeecqrs.event.registry;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import org.jeecqrs.event.EventInterest;
 import org.jeecqrs.event.EventBusListener;
 import org.jeecqrs.event.EventBusListenerRegistry;
+import org.jeecqrs.event.EventInterest;
+
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class AbstractEventBusListenerRegistry<E> implements EventBusListenerRegistry<E> {
 
@@ -57,7 +54,7 @@ public class AbstractEventBusListenerRegistry<E> implements EventBusListenerRegi
 
     /**
      * Must only be called from {@code LockType.WRITE} protected methods.
-     * @param handler
+     * @param handler the event handler
      */
     protected void register(EventBusListener<E> handler) {
         EventInterest<E> interest = handler.interestedInEvents();
@@ -67,8 +64,8 @@ public class AbstractEventBusListenerRegistry<E> implements EventBusListenerRegi
 
     /**
      * Must only be called from {@code LockType.WRITE} protected methods.
-     * @param handler
-     * @param clazz
+     * @param handler the event handler
+     * @param clazz the class
      */
     protected void register(EventBusListener<E> handler, Class<? extends E> clazz) {
         log.log(Level.FINE, "Register {1} for event {0}",
@@ -83,8 +80,8 @@ public class AbstractEventBusListenerRegistry<E> implements EventBusListenerRegi
 
     /**
      * May be called from {@code LockType.READ} protected methods.
-     * @param clazz
-     * @return 
+     * @param clazz the event class
+     * @return the event listeners registered for the given class
      */
     protected Set<EventBusListener<E>> lookup(Class<? extends E> clazz) {
         Set<EventBusListener<E>> res = handlers.get(clazz);

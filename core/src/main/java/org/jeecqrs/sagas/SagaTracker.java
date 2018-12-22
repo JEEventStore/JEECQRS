@@ -24,7 +24,7 @@ package org.jeecqrs.sagas;
 /**
  * The SagaTracker manages timeout requests requested by Sagas.
  * The default state is disabled, i.e., requests that timed out are
- * not processed/withhold until {@link #enable} has been called.
+ * not processed/withhold until {@code enable} has been called.
  * 
  * @param <E>   the type of events to handle
  */
