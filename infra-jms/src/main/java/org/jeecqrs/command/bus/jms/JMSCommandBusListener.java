@@ -39,7 +39,7 @@ public class JMSCommandBusListener implements MessageListener {
     @Resource
     private MessageDrivenContext mdc;
 
-    @EJB(name="commandHandlerRegistry")
+    @EJB
     private CommandHandlerRegistry registry;
 
     @Override

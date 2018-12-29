@@ -21,13 +21,14 @@
 
 package org.jeecqrs.sagas.tracker.jpa;
 
+import org.jeecqrs.sagas.tracker.AbstractPollingSagaTracker;
+
+import javax.ejb.EJB;
+import javax.persistence.EntityManager;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ejb.EJB;
-import javax.persistence.EntityManager;
-import org.jeecqrs.sagas.tracker.AbstractPollingSagaTracker;
 
 /**
  * Saga tracker that uses JPA to track timeout requests.
@@ -37,7 +38,7 @@ public class JPASagaTracker<E> extends AbstractPollingSagaTracker<E> {
 
     private static final Logger log = Logger.getLogger(JPASagaTracker.class.getCanonicalName());
 
-    @EJB(name="persistenceContextProvider")
+    @EJB
     private JPASagaTrackerPersistenceContextProvider persistenceContextProvider;
 
     @Override

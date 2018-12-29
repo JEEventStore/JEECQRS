@@ -32,7 +32,7 @@ public abstract class AbstractSagaTracker<E> implements SagaTracker<E> {
 
     private final Logger log = Logger.getLogger(this.getClass().getCanonicalName());
     
-    @EJB(name="eventBus")
+    @EJB
     private SagaTrackerEventBus<E> eventBus;
 
     /**

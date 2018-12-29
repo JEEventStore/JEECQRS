@@ -31,7 +31,7 @@ public abstract class AbstractSerializingSagaTracker<E> extends AbstractSagaTrac
 
     private final Logger log = Logger.getLogger(this.getClass().getCanonicalName());
     
-    @EJB(name="eventSerializer")
+    @EJB
     private SagaTrackerEventSerializer serializer;
 
     @Override

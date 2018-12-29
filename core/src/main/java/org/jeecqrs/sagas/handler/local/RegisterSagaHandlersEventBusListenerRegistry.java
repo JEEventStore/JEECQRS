@@ -42,13 +42,13 @@ public class RegisterSagaHandlersEventBusListenerRegistry<E> extends AbstractEve
     private final Logger log =Logger.getLogger(
             RegisterSagaHandlersEventBusListenerRegistry.class.getName());
     
-    @EJB(name="sagaRegistry")
+    @EJB
     private SagaRegistry<E> sagaRegistry;
 
-    @EJB(name="sagaService")
+    @EJB
     private SagaService sagaService;
 
-    @EJB(name="sagaConfigResolver")
+    @EJB
     private SagaConfigResolver<E> sagaConfigResolver;
     
     @PostConstruct

@@ -37,7 +37,7 @@ public abstract class AbstractSimpleCommandBus<C> {
 
     private final Logger log = Logger.getLogger(this.getClass().getCanonicalName());
 
-    @EJB(name="commandHandlerRegistry")
+    @EJB
     private CommandHandlerRegistry registry;
 
     protected void callHandler(C command) {

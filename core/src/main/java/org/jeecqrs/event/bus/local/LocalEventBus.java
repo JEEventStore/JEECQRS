@@ -49,7 +49,7 @@ public class LocalEventBus<E> implements EventBus<E> {
 
     private static final Logger log = Logger.getLogger(LocalEventBus.class.getCanonicalName());
 
-    @EJB(name="multiTopicPublisher")
+    @EJB
     private MultiTopicPublisher mtp;
 
     @Inject

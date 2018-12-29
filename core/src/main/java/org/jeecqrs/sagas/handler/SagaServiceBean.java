@@ -37,10 +37,10 @@ import org.jeecqrs.sagas.SagaRepository;
  */
 public class SagaServiceBean<S extends Saga<E>, E> implements SagaService<S, E> {
 
-    @EJB(name="sagaRepository")
+    @EJB
     private SagaRepository sagaRepository;
 
-    @EJB(name="sagaConfigResolver")
+    @EJB
     private SagaConfigResolver<E> sagaConfigResolver;
 
     @Override
