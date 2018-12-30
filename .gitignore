@@ -5,6 +5,7 @@
 *.ear
 nbactions.xml
 /target/
+/bom-all/target/
 /core/target/
 /infra-jpa-ejb/target/
 /infra-jms/target/
