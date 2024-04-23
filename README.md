@@ -1,3 +1,7 @@
+# Note
+
+A decade later and having developed several message driven applications later, I would probably implement a few things quite a bit differently today.  I'm no longer maintaining this and merely keep it as a reference implementation for other people to learn about event sourcing and investigate. 
+
 JEECQRS
 =======
 
